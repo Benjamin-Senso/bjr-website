@@ -1,0 +1,20 @@
+services:
+  web:
+    build: .
+    image: bjr-website
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      # Required: a long random string. Set this in a .env file next to this
+      # compose file (PAYLOAD_SECRET=...), or export it in your shell.
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET in .env}
+      # These match the Dockerfile defaults; override only if needed.
+      DATABASE_URI: file:/app/data/bjr.db
+      MEDIA_DIR: /app/data/media
+    volumes:
+      # Persists the SQLite database and uploaded media across restarts/redeploys.
+      - bjr-data:/app/data
+
+volumes:
+  bjr-data:

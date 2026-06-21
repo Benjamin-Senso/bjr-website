@@ -1,0 +1,32 @@
+# Dependencies & build output (rebuilt inside the image)
+node_modules
+.next
+out
+build
+
+# Local data — never bake into the image
+bjr.db
+bjr.db-shm
+bjr.db-wal
+data
+media
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# Git & tooling
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+README.md
+
+# Misc
+.DS_Store
+npm-debug.log*
+*.tsbuildinfo
+.vscode
+.idea

@@ -33,6 +33,9 @@ export default buildConfig({
     client: {
       url: process.env.DATABASE_URI || 'file:./bjr.db',
     },
+    // Auto-create/sync the schema on boot. On a fresh server (empty volume) this
+    // builds all tables on first run, so no separate migration step is needed.
+    push: true,
   }),
   sharp,
   plugins: [],

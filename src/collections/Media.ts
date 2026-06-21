@@ -18,5 +18,7 @@ export const Media: CollectionConfig = {
       },
     },
   ],
-  upload: true,
+  // In production (Docker) MEDIA_DIR points at the persistent volume so uploads
+  // survive restarts. Locally it's unset and Payload uses the default folder.
+  upload: process.env.MEDIA_DIR ? { staticDir: process.env.MEDIA_DIR } : true,
 }
