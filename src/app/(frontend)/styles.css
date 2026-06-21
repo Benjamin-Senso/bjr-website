@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ *  - Background is black, text is a soft off-white.
+ *  - The purple accent (#9B8BC8) is reserved for CTAs / interactive bits.
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-background: #000000;
+  --color-foreground: #ededed;
+  --color-muted: #8a8a8a;
+  --color-border: #1f1f1f;
+  --color-accent: #9b8bc8;
+  --color-accent-hover: #b3a4dc;
+
+  --font-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  position: relative;
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  /* Base accent glow (also the fallback when WebGL is unavailable). */
+  background:
+    radial-gradient(
+      ellipse 90% 45% at 50% -5%,
+      color-mix(in srgb, var(--color-accent) 11%, transparent),
+      transparent 65%
+    ),
+    var(--color-background);
+  background-attachment: fixed;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * WebGL aurora — pinned to the top, fades into the black below.
+ * ------------------------------------------------------------------ */
+.aurora {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 62vh;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
+}
+
+/* ------------------------------------------------------------------ *
+ * Liquid glass
+ *  - Frosted blur + saturation/brightness (cross-browser, incl. Safari).
+ *  - Specular edge ring + top sheen approximate Apple's rim light.
+ *  - Chromium also refracts the backdrop via the SVG displacement filter;
+ *    Safari uses the -webkit- value (no url) and stays cleanly frosted.
+ * ------------------------------------------------------------------ */
+.liquid-glass {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.03)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(14px) saturate(180%) brightness(1.06);
+  backdrop-filter: blur(14px) saturate(180%) brightness(1.06) url(#liquid-glass);
+  box-shadow:
+    0 10px 34px rgba(0, 0, 0, 0.42),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 -10px 26px rgba(255, 255, 255, 0.03);
+}
+
+/* Pointer-reactive specular highlight — follows the cursor across the surface.
+   Defaults to a soft top sheen (glow baseline) when not hovered. JS updates
+   --mx / --my / --glow on pointer move. */
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    220px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(255, 255, 255, 0.22),
+    transparent 60%
+  );
+  opacity: var(--glow, 0.5);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* Specular edge ring (bright top-left, fading round) */
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.08) 25%,
+    transparent 55%,
+    rgba(255, 255, 255, 0.18)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
