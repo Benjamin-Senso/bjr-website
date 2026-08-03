@@ -63,6 +63,81 @@ const items = [
       },
     ]) as WorkItem['body'],
   },
+  {
+    slug: 'signet',
+    name: 'Signet',
+    type: 'venture' as const,
+    role: 'Founder',
+    status: 'building' as const,
+    url: 'https://withsignet.co',
+    order: 1,
+    description:
+      'E-signing for founders and small teams. Contracts, proposals and NDAs, signed without the other side needing an account.',
+    body: lexicalDoc([
+      { heading: 'What it is' },
+      {
+        text: 'Signet is an e-signing product for founders and small teams. Contracts, proposals and NDAs go out for signature and come back sealed with a verifiable record, and the person signing never has to create an account.',
+      },
+      {
+        text: 'That last part is the point. Most e-signing tools ask your client to sign up for something before they can sign anything, which puts a login screen between you and a closed deal. With Signet the link is the session. They click, they sign, it is done.',
+      },
+      { heading: 'What they do' },
+      {
+        text: 'Templates are designed rather than generic, so what lands in someone\u2019s inbox looks like it came from you rather than from a form builder. Every completed document carries a tamper-evident seal, a certificate of completion delivered to all parties, and an audit trail where each event is immutable. It is aligned with eIDAS and ESIGN, with data residency in the UK and EU.',
+      },
+      {
+        text: 'The product is built around the paperwork small businesses actually push through: sales contracts, proposals and scopes of work, NDAs, master service agreements, offer letters, client onboarding. Some sectors carry their own version of that. Waste and recycling has transfer notes. Construction has RAMS and sign-offs. Facilities management has permits. Those are not edge cases to the people who send them every day.',
+      },
+      {
+        text: 'Plenty is still being built. Approvals before a document sends, sequential and parallel routing, client spaces, renewal reminders, multi-entity branding, webhooks. Signet is early and does not pretend otherwise.',
+      },
+      { heading: 'What I did' },
+      {
+        text: 'Signet came out of a problem I had rather than a market I spotted. Running a studio across two entities means a constant stream of proposals, engagement letters and NDAs, and every tool I tried treated the signing experience as an afterthought. The client got a generic email, a login wall, and a PDF that looked nothing like the brand that sent it.',
+      },
+      {
+        text: 'So the brief was narrow. Make signing feel like part of the brand rather than a detour away from it, and make the proof genuinely provable rather than a claim in a footer. Those two pull against each other. Tamper-evidence tends to arrive wrapped in the ugliest interface in the business, and design-led tools tend to be vague about what they can actually stand behind.',
+      },
+      {
+        text: 'What I do here is what I do at the studio, applied to my own product: positioning, brand and product, and the commercial side underneath it. The difference is that there is no client to hand it to at the end.',
+      },
+    ]) as WorkItem['body'],
+  },
+  {
+    slug: 'mandem-meetup',
+    name: 'Mandem Meetup',
+    type: 'involvement' as const,
+    role: 'Partner',
+    status: 'active' as const,
+    // The rebuilt site, launching this week. Swap to the apex once it is live.
+    url: 'https://dev.mandemmeetup.org',
+    order: 2,
+    description:
+      'A free grassroots community supporting men\u2019s mental health, running in Manchester and Wolverhampton.',
+    body: lexicalDoc([
+      { heading: 'What it is' },
+      {
+        text: 'Mandem Meetup is a free grassroots community supporting men\u2019s mental health, running in Manchester and Wolverhampton. Jamie Dennis started it after experiencing what it felt like to be properly heard for the first time. It began around a kitchen table and has grown into something supporting over a thousand men a year.',
+      },
+      {
+        text: 'It is deliberately not therapy. Nobody there is claiming to fix anyone. The whole thing rests on a simpler idea: that most men do not need an intervention, they need somewhere to be honest without it becoming a thing.',
+      },
+      { heading: 'What they do' },
+      {
+        text: 'Everything is free to attend. Football, hiking, foraging, workouts, music and chess sit alongside the WhatsApp communities that keep it running between meetups. The activity is mostly a pretext. It is easier to say something real while you are walking or kicking a ball than sitting in a circle being asked how you feel.',
+      },
+      {
+        text: 'Underneath that sits work most people never see. Safeguarding, a referral route for people who need more than a meetup can give, a quiet space for when the noise gets too much, and accessibility choices so the site works for whoever turns up to it. That infrastructure is what separates a community from a group chat.',
+      },
+      { heading: 'What I did' },
+      {
+        text: 'I came to it as someone who could help with the part Jamie should not have to think about. A grassroots organisation lives or dies on whether it can explain itself clearly to the people it serves, to partners and to funders, and that is squarely what I do.',
+      },
+      {
+        text: 'The honest reason I am involved is narrower than any of that. Men are famously bad at asking for help and I am not an exception to it. Somewhere that lowers the cost of being honest is worth more than most things I could put my time into.',
+      },
+    ]) as WorkItem['body'],
+  },
 ]
 
 // Top-level await, not a floating promise: `payload run` executes the module
