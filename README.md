@@ -123,6 +123,14 @@ deploy.
 **Renaming or moving a field triggers an interactive "created or renamed?" prompt** during
 `payload migrate:create`, which hangs with no TTY. Answer it in an interactive terminal.
 
+**The database schema must not depend on environment variables.** The cloud storage plugin
+injects a `prefix` column into `media` when a prefix is configured, but only while the plugin
+is enabled. That made migrations generated locally (R2 off) disagree with production (R2 on),
+and every upload failed with `column "prefix" does not exist`. No prefix is configured for
+this reason. If you add a plugin that changes fields conditionally, check
+`pnpm payload migrate:create` reports "No schema changes detected" both with and without the
+relevant env vars set.
+
 ## Analytics and consent
 
 Google Tag Manager loads only when `GTM_ID` is set, so dev and preview environments stay out

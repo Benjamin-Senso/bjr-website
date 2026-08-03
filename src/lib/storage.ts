@@ -10,6 +10,14 @@ import { s3Storage } from '@payloadcms/storage-s3'
  *
  * With none of the variables set the plugin is a no-op and uploads go to
  * disk, which is what local dev wants.
+ *
+ * No `prefix` is configured, deliberately. The cloud-storage plugin injects a
+ * `prefix` column into the media collection when one is set, but only while
+ * the plugin is enabled. That made the database schema depend on whether R2
+ * env vars were present: migrations generated locally (R2 off) omitted the
+ * column, and production (R2 on) then queried a column that did not exist,
+ * failing every upload. Files land at the bucket root instead, which keeps
+ * the schema identical in every environment.
  */
 
 const REQUIRED = [
@@ -69,8 +77,8 @@ export const r2Storage = s3Storage({
   enabled: isR2Configured(),
   collections: {
     media: publicBase
-      ? { prefix: 'media', generateFileURL: ({ filename }) => `${publicBase}/media/${filename}` }
-      : { prefix: 'media' },
+      ? { generateFileURL: ({ filename }) => `${publicBase}/${filename}` }
+      : true,
   },
   bucket: process.env.R2_BUCKET || '',
   config: {
