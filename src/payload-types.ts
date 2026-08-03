@@ -212,7 +212,7 @@ export interface WorkItem {
    */
   description?: string | null;
   /**
-   * The write-up: what it is, what they do, what you have done for it. Written as an article rather than a formal case study.
+   * An article, not a formal case study: what it is, what they do, what you have done for it. The headings are a starting point, change them to suit.
    */
   body?: {
     root: {

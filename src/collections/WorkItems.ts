@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { revalidateWorkItems } from '../hooks/revalidate'
+import { lexicalDoc } from '../globals/fields/lexical'
 
 const slugify = (value: string) =>
   value
@@ -108,10 +109,23 @@ export const WorkItems: CollectionConfig = {
     {
       name: 'body',
       type: 'richText',
-      label: 'Page Content',
+      label: 'Write-up',
+      // Scaffolded rather than blank so every entry starts with the same
+      // three beats. Overwrite the headings freely; they are only a prompt.
+      // Function default: a static one is baked into the column DDL, which
+      // breaks on apostrophes in the JSON.
+      defaultValue: () =>
+        lexicalDoc([
+          { heading: 'What it is' },
+          { text: '' },
+          { heading: 'What they do' },
+          { text: '' },
+          { heading: 'What I did' },
+          { text: '' },
+        ]),
       admin: {
         description:
-          'The write-up: what it is, what they do, what you have done for it. Written as an article rather than a formal case study.',
+          'An article, not a formal case study: what it is, what they do, what you have done for it. The headings are a starting point, change them to suit.',
       },
     },
     {

@@ -43,13 +43,33 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+html {
+  /* Paint the page colour on the root as well, so the area iOS exposes when
+     the address bar collapses is never bare white or black. */
+  background-color: var(--color-background);
+}
+
 body {
   margin: 0;
   min-height: 100svh;
   position: relative;
   color: var(--color-foreground);
   font-family: var(--font-sans);
-  /* Base accent glow (also the fallback when WebGL is unavailable). */
+  background-color: var(--color-background);
+  /* Never let a horizontal overflow introduce a scrollbar on mobile. */
+  overflow-x: hidden;
+}
+
+/* Base accent glow, and the fallback when WebGL is unavailable.
+   A fixed pseudo-element rather than `background-attachment: fixed` on the
+   body: iOS Safari does not honour fixed attachment, which left the gradient
+   misplaced and the top of the screen as bare black. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
     radial-gradient(
       ellipse 90% 45% at 50% -5%,
@@ -57,12 +77,43 @@ body {
       transparent 65%
     ),
     var(--color-background);
-  background-attachment: fixed;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Safe areas
+ *
+ * With viewport-fit=cover the page paints edge to edge, including under
+ * the notch and the home indicator, so anything anchored to an edge has
+ * to add the inset back. env() resolves to 0 everywhere it does not
+ * apply, so these are inert on desktop.
+ * ------------------------------------------------------------------ */
+.nav-shell {
+  top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  padding-left: calc(env(safe-area-inset-left, 0px) + 1rem);
+  padding-right: calc(env(safe-area-inset-right, 0px) + 1rem);
+}
+
+@media (min-width: 640px) {
+  .nav-shell {
+    top: calc(env(safe-area-inset-top, 0px) + 1.5rem);
+  }
+}
+
+.page-shell {
+  padding-left: calc(env(safe-area-inset-left, 0px) + 1.5rem);
+  padding-right: calc(env(safe-area-inset-right, 0px) + 1.5rem);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4rem);
+}
+
+.site-footer {
+  padding-left: calc(env(safe-area-inset-left, 0px) + 1.5rem);
+  padding-right: calc(env(safe-area-inset-right, 0px) + 1.5rem);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2.5rem);
 }
 
 /* ------------------------------------------------------------------ *
@@ -73,7 +124,10 @@ a {
   top: 0;
   left: 0;
   width: 100%;
-  height: 62vh;
+  /* svh, not vh: on iOS vh resolves to the *largest* viewport, so with the
+     address bar shown the aurora extended past the fold and its mask gradient
+     landed in the wrong place. */
+  height: 62svh;
   z-index: 0;
   pointer-events: none;
   mix-blend-mode: screen;

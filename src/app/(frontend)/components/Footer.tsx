@@ -1,6 +1,6 @@
 export function Footer({ text }: { text?: string | null }) {
   return (
-    <footer className="text-muted relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center gap-4 px-6 pb-10 text-sm sm:flex-row sm:justify-between">
+    <footer className="site-footer text-muted relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center gap-4 px-6 text-sm sm:flex-row sm:justify-between">
       <p>{text}</p>
 
       <a

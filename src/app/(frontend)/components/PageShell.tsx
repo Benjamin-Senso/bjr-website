@@ -25,7 +25,7 @@ export function PageShell({
       className={
         // Generous top padding: the sticky nav sits directly above, and the
         // content needs room to breathe under it.
-        'relative z-10 mx-auto flex min-h-svh w-full flex-col px-6 pt-20 pb-16 sm:pt-28 sm:pb-20 ' +
+        'page-shell relative z-10 mx-auto flex min-h-svh w-full flex-col px-6 pt-20 sm:pt-28 ' +
         max
       }
     >

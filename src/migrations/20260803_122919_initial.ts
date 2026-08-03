@@ -257,6 +257,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"intro" varchar DEFAULT 'Studio work, advisory and consulting, or a venture you want a partner on. If you are building something and want brand and product that pulls commercial weight, get in touch.',
   	"show_form" boolean DEFAULT true,
   	"form_heading" varchar DEFAULT 'Send a message',
+  	"notify_email" varchar DEFAULT 'ben@sensostudio.co',
   	"email" varchar,
   	"availability" varchar,
   	"show_socials" boolean DEFAULT true,

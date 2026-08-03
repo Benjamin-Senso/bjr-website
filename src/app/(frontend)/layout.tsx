@@ -1,3 +1,4 @@
+import type { Viewport } from 'next'
 import { Inter, Instrument_Serif } from 'next/font/google'
 import React from 'react'
 import './styles.css'
@@ -23,6 +24,19 @@ const instrumentSerif = Instrument_Serif({
   variable: '--font-instrument-serif',
   display: 'swap',
 })
+
+/**
+ * viewportFit 'cover' lets the page paint into the notch and home-indicator
+ * areas; the safe-area insets in styles.css then keep content clear of them.
+ * Without it iOS letterboxes the page and the inset variables all read 0.
+ */
+export const viewport: Viewport = {
+  themeColor: '#000000',
+  colorScheme: 'dark',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getGlobal('site-settings')

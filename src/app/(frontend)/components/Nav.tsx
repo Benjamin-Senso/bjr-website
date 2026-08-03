@@ -70,7 +70,7 @@ export function Nav({ routes, cta }: { routes: NavRoute[]; cta: NavRoute }) {
   }, [measure])
 
   return (
-    <div className="sticky top-4 z-50 flex justify-center px-4 sm:top-6">
+    <div className="nav-shell sticky z-50 flex justify-center px-4">
       <nav aria-label="Main" className="liquid-glass rounded-full p-1.5">
         <div ref={listRef} className="relative flex items-center gap-1 sm:gap-2">
           {indicator ? (
