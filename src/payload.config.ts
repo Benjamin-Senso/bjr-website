@@ -1,4 +1,4 @@
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -10,6 +10,7 @@ import { Media } from './collections/Media'
 import { WorkItems } from './collections/WorkItems'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { r2Storage } from './lib/storage'
+import { buildEmailAdapter } from './lib/email'
 import { SiteSettings } from './globals/SiteSettings'
 import { Home } from './globals/Home'
 import { About } from './globals/About'
@@ -37,9 +38,9 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI || 'file:./bjr.db',
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URI || '',
     },
     // Dev only: auto-sync the local schema as fields change. In production this
     // must stay off — push can ask an interactive "created or renamed?" question,
@@ -47,6 +48,7 @@ export default buildConfig({
     // the Docker CMD runs `payload migrate` before starting.
     push: process.env.NODE_ENV !== 'production',
   }),
+  email: buildEmailAdapter(),
   sharp,
   plugins: [r2Storage],
 })

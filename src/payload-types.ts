@@ -792,6 +792,10 @@ export interface Contact {
   showForm?: boolean | null;
   formHeading?: string | null;
   /**
+   * Form submissions are emailed here. They are always stored under Messages as well, so nothing is lost if mail delivery fails.
+   */
+  notifyEmail?: string | null;
+  /**
    * Rendered as a mailto: link. Just the address, no "mailto:" prefix.
    */
   email?: string | null;
@@ -969,6 +973,7 @@ export interface ContactSelect<T extends boolean = true> {
   intro?: T;
   showForm?: T;
   formHeading?: T;
+  notifyEmail?: T;
   email?: T;
   availability?: T;
   showSocials?: T;

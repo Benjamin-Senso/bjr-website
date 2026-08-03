@@ -26,8 +26,8 @@ RUN PAYLOAD_SECRET=build-only-placeholder pnpm build
 # ---- Runner -------------------------------------------------------------
 FROM base AS runner
 ENV NODE_ENV=production
-# Persistent data lives here — mount a volume at /app/data.
-ENV DATABASE_URI=file:/app/data/bjr.db
+# DATABASE_URI is supplied at runtime (Postgres connection string).
+# Uploaded media falls back to this volume when R2 is not configured.
 ENV MEDIA_DIR=/app/data/media
 ENV PORT=3000
 

@@ -2,6 +2,7 @@
 
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { isEmailConfigured } from '@/lib/email'
 
 export type ContactState = {
   status: 'idle' | 'success' | 'error'
@@ -10,6 +11,13 @@ export type ContactState = {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
 
 export async function contactAction(
   _prev: ContactState,
@@ -35,21 +43,40 @@ export async function contactAction(
     return { status: 'error', message: 'Please check the fields above.', fieldErrors }
   }
 
+  let payload
   try {
-    const payload = await getPayload({ config })
+    payload = await getPayload({ config })
     await payload.create({
       collection: 'contact-submissions',
-      data: {
-        name,
-        email,
-        subject: subject || undefined,
-        message,
-        handled: false,
-      },
+      data: { name, email, subject: subject || undefined, message, handled: false },
     })
   } catch (err) {
     console.error('contact: failed to store submission', err)
     return { status: 'error', message: 'Something went wrong. Please email me instead.' }
+  }
+
+  // Storing the message is what counts as success. The notification is
+  // best-effort: a mail failure must not tell the sender their message was
+  // lost, because it was not.
+  try {
+    const contact = await payload.findGlobal({ slug: 'contact' })
+    const to = contact?.notifyEmail
+
+    if (to && isEmailConfigured()) {
+      await payload.sendEmail({
+        to,
+        // From must be the authenticated sender or the SMTP server will reject
+        // it; the visitor's address goes in replyTo so hitting reply works.
+        replyTo: `${name} <${email}>`,
+        subject: subject ? `Website: ${subject}` : `Website message from ${name}`,
+        text: `${name} <${email}>\n\n${message}`,
+        html: `<p><strong>${escapeHtml(name)}</strong> &lt;${escapeHtml(email)}&gt;</p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
+      })
+    } else if (to) {
+      console.warn('contact: SMTP not configured, notification not sent')
+    }
+  } catch (err) {
+    console.error('contact: failed to send notification', err)
   }
 
   return { status: 'success', message: 'Thanks. I will get back to you.' }

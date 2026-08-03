@@ -54,6 +54,17 @@ export const Contact: GlobalConfig = {
               admin: { condition: (_, s) => s?.showForm !== false },
             },
             {
+              name: 'notifyEmail',
+              type: 'email',
+              label: 'Forward Messages To',
+              defaultValue: 'ben@sensostudio.co',
+              admin: {
+                condition: (_, s) => s?.showForm !== false,
+                description:
+                  'Form submissions are emailed here. They are always stored under Messages as well, so nothing is lost if mail delivery fails.',
+              },
+            },
+            {
               name: 'email',
               type: 'text',
               label: 'Email Address',

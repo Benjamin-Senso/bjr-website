@@ -3,22 +3,22 @@
 Personal site for Benjamin Rutter. A small multi-page site with a built-in CMS.
 
 Built with **Next.js 16** + **Payload CMS 3** (Payload runs inside the Next.js app) and
-**Tailwind CSS v4**. Content is stored in **SQLite** and edited through the admin panel.
+**Tailwind CSS v4**. Content is stored in **Postgres** and edited through the admin panel.
 
 > Next is pinned to **16.2.6** deliberately. Next 15.4.11 has a `global-not-found` ESM bug
 > that 500s `/admin`. Do not downgrade without re-testing the admin panel.
 
 ## Routes
 
-| Route       | Content source                        | Notes                                            |
-| ----------- | ------------------------------------- | ------------------------------------------------ |
-| `/`         | `home` global                         | Hero, statement, socials, section panels         |
-| `/work`     | `work` global + `ventures` collection | Studio story, project panels, All/Projects/Ventures filter |
-| `/about`    | `about` global                        | Long-form bio and "what I help with"             |
-| `/ventures` | `ventures-page` global + collection   | Hidden from the nav until a venture exists       |
-| `/writing`  | `writing` global + beehiiv API        | Hidden from the nav unless beehiiv is configured |
-| `/contact`  | `contact` global                      | Email and socials                                |
-| `/admin`    | Payload                               | The CMS                                          |
+| Route           | Content source                          | Notes                                                     |
+| --------------- | --------------------------------------- | --------------------------------------------------------- |
+| `/`             | `home` global                           | Hero, statement, socials, section panels                  |
+| `/work`         | `work` global + `work-items` collection | Studio story, grid filtered by type, advisory block        |
+| `/work/<slug>`  | `work-items` collection                 | Per-item write-up, cover image, gallery                   |
+| `/about`        | `about` global                          | Long-form bio and "what I help with"                      |
+| `/writing`      | `writing` global + beehiiv API          | Hidden from the nav unless beehiiv is configured          |
+| `/contact`      | `contact` global                        | Contact form, email, socials                              |
+| `/admin`        | Payload                                 | The CMS                                                   |
 
 The nav is **not** CMS-editable. Its items map 1:1 to directories in the app router, and
 routes with nothing behind them are dropped server-side in `src/app/(frontend)/layout.tsx`
@@ -27,9 +27,13 @@ so the nav never leads somewhere empty.
 ## Content model
 
 - `site-settings` — name, avatar, socials, footer text, fallback SEO. Shared by every route.
-- `home`, `about`, `work`, `ventures-page`, `writing`, `contact` — one global per page, each
-  with its own SEO tab that falls back to Site Settings.
-- `ventures` — a collection, because ventures are recurring content added over time.
+- `home`, `about`, `work`, `writing`, `contact` — one global per page, each with its own SEO
+  tab (title, description, keywords, share image) that falls back to Site Settings.
+- `work-items` — a collection. Companies, ventures, projects and involvements share it,
+  because the difference between them is a relationship rather than a different shape of
+  content. The `type` field drives the filter pills on /work, and a pill only appears once
+  that type has entries.
+- `contact-submissions` — messages from the contact form. Admin-read only.
 - `media` — uploads.
 
 Every field ships a `defaultValue`, so a fresh database renders real copy rather than blanks.
@@ -44,7 +48,13 @@ pnpm install
 cp .env.example .env
 ```
 
-Set `PAYLOAD_SECRET` to a long random string, then:
+Create the database and set `PAYLOAD_SECRET` to a long random string:
+
+```bash
+createdb bjr_website
+```
+
+Then:
 
 ```bash
 pnpm dev
@@ -78,6 +88,11 @@ pnpm payload migrate
 
 ## Gotchas worth knowing
 
+**Dev and production must both be Postgres.** Payload migrations are
+dialect-specific, so a migration generated against SQLite will not apply to
+Postgres. Create a local database once with `createdb bjr_website` and point
+`DATABASE_URI` at it.
+
 **After changing a global's field shape, delete `.next`.** Page content is read through
 `unstable_cache` (`src/app/(frontend)/lib/content.ts`). A cached entry survives a dev server
 restart, so pages can keep rendering the *old* field shape while the REST API returns the new
@@ -85,16 +100,16 @@ one. `rm -rf .next/cache` is not enough under Turbopack — remove the whole `.n
 In production the 300s revalidate window means this self-heals.
 
 **richText `defaultValue` must be a function, not a static value.** Payload bakes a static
-default into the SQLite column DDL, and apostrophes in the Lexical JSON break the generated
-SQL (`SQLITE_ERROR: near "s"`). Write `defaultValue: () => lexicalParagraphs([...])`.
+default into the column DDL, where apostrophes in the Lexical JSON break the generated SQL.
+Write `defaultValue: () => lexicalParagraphs([...])`.
 
 **Schema push is dev-only.** `push` is enabled only when `NODE_ENV !== 'production'`. In
 production it can hang the container on an interactive "created or renamed?" prompt with no
 TTY. Production applies committed migrations instead.
 
 **Renaming or moving a field triggers that same interactive prompt** during
-`payload migrate:create`. Pre-launch, the fastest fix is to delete `src/migrations/*` and the
-local `bjr.db`, then regenerate a single clean initial migration.
+`payload migrate:create`. Pre-launch, the fastest fix is to delete `src/migrations/*`, drop
+and recreate the local database, then regenerate a single clean initial migration.
 
 ## Database migrations
 
@@ -113,21 +128,29 @@ terminates TLS and routes to the container over the shared `dokploy-network`, so
 
 1. Create a Compose application pointing at this repository.
 2. Set these in the **Environment** tab:
+   - `DATABASE_URI` — the Postgres connection string. Dokploy supplies this
+     automatically when a Postgres service is attached to the app.
    - `PAYLOAD_SECRET` — `openssl rand -base64 32`
    - `NEXT_PUBLIC_SERVER_URL` — the public origin, e.g. `https://your-domain.com`, no
      trailing slash
    - `BEEHIIV_API_KEY` and `BEEHIIV_PUBLICATION_ID` — optional; without both, `/writing`
      stays hidden
+   - `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — optional; forwards contact form
+     messages by email. Without them messages are still stored under Messages in the CMS.
+   - `R2_*` — optional; see `.env.example`. Set `R2_PUBLIC_URL` before the first deploy, as
+     it is read at build time for `next/image`.
 3. In the **Domains** tab add the domain, service `web`, container port `3000`, HTTPS on
    with Let's Encrypt.
 4. Point DNS at the VPS before deploying, or certificate issuance fails:
    - `A` record, `@` → server IP
    - `A` record (or `CNAME` to the apex), `www` → server IP
-5. Deploy. Migrations run on start and create the schema on the empty volume.
+5. Deploy. Migrations run on start and create the schema in the empty database.
 6. Visit `/admin` and create the admin user. **Do this promptly** — the first-user route is
    open until someone claims it.
 
-**The volume is the thing that bites.** The SQLite database *and* all uploaded media live in
-the `bjr-data` volume at `/app/data`. A redeploy without it mounted comes up as an empty CMS
-with no images. Configure Dokploy's S3 backups for it, and do one restore drill — a backup
-you have never restored is not a backup.
+**Back up Postgres.** All content lives there. Dokploy can back a database service up to S3
+on a schedule; set it, then do one restore drill, because a backup you have never restored is
+not a backup.
+
+The `bjr-data` volume only holds uploaded media, and only when R2 is not configured. With R2
+set up, the container is stateless.
