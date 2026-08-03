@@ -166,8 +166,7 @@ terminates TLS and routes to the container over the shared `dokploy-network`, so
    - `DATABASE_URI` — the Postgres connection string. Dokploy supplies this
      automatically when a Postgres service is attached to the app.
    - `PAYLOAD_SECRET` — `openssl rand -base64 32`
-   - `NEXT_PUBLIC_SERVER_URL` — the public origin, e.g. `https://your-domain.com`, no
-     trailing slash
+   - `NEXT_PUBLIC_SERVER_URL` — `https://benjaminrutter.com`, no trailing slash
    - `BEEHIIV_API_KEY` and `BEEHIIV_PUBLICATION_ID` — optional; without both, `/writing`
      stays hidden
    - `RESEND_API_KEY` and `EMAIL_FROM` — optional; forwards contact form messages by email.
@@ -184,8 +183,15 @@ terminates TLS and routes to the container over the shared `dokploy-network`, so
 3. In the **Domains** tab add the domain, service `web`, container port `3000`, HTTPS on
    with Let's Encrypt.
 4. Point DNS at the VPS before deploying, or certificate issuance fails:
-   - `A` record, `@` → server IP
-   - `A` record (or `CNAME` to the apex), `www` → server IP
+
+   | Type | Name | Value | Proxy |
+   | ---- | ---- | ----- | ----- |
+   | A | `@` | your VPS IP | DNS only |
+   | A | `www` | your VPS IP | DNS only |
+
+   If DNS is on Cloudflare, the records must be **DNS only** (grey cloud), not proxied.
+   Traefik answers the Let's Encrypt HTTP-01 challenge itself, and Cloudflare's proxy
+   intercepts it, so an orange cloud makes certificate issuance fail.
 5. Deploy. Migrations run on start and create the schema in the empty database.
 6. Visit `/admin` and create the admin user. **Do this promptly** — the first-user route is
    open until someone claims it.

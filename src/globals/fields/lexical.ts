@@ -40,7 +40,7 @@ const heading = (text: string) => ({
   children: [textNode(text)],
 })
 
-const root = (children: unknown[]) => ({
+const root = (children: Record<string, unknown>[]) => ({
   root: {
     type: 'root',
     format: '' as const,

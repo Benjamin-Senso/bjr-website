@@ -76,6 +76,31 @@ body::before {
     var(--color-background);
 }
 
+/* Top scrim.
+   iOS Safari fills the status bar area with the page's theme-color, which is
+   black. The aurora is at its brightest exactly there, so the two met in a
+   hard seam that read as the page being cut off. Resolving the first few
+   pixels of the page to black makes that join invisible, and matching a
+   theme-color to a moving WebGL gradient is not possible anyway.
+
+   Sits above the backdrop and below all content. */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(env(safe-area-inset-top, 0px) + 24px);
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    var(--color-background) 0%,
+    color-mix(in srgb, var(--color-background) 65%, transparent) 55%,
+    transparent 100%
+  );
+}
+
 a {
   color: inherit;
   text-decoration: none;
