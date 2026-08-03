@@ -19,6 +19,12 @@ FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=production
+# next/image bakes its allowed remote hosts into the build output, so serving
+# media straight from an R2 custom domain needs the host known HERE, not at
+# runtime. Supply it as a build arg if you use R2_PUBLIC_URL; leaving it unset
+# serves media through this server instead, which needs no allowlist.
+ARG R2_PUBLIC_URL=""
+ENV R2_PUBLIC_URL=$R2_PUBLIC_URL
 # A non-empty secret is required for the production build; the real secret is
 # supplied at runtime. Kept inline so it isn't baked into the image.
 RUN PAYLOAD_SECRET=build-only-placeholder pnpm build

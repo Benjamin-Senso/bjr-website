@@ -175,8 +175,12 @@ terminates TLS and routes to the container over the shared `dokploy-network`, so
      hosts that block outbound SMTP ports. `EMAIL_FROM`'s domain must be verified in Resend.
      `SMTP_*` is used as a fallback when no Resend key is set. Without either, messages are
      still stored under Messages in the CMS.
-   - `R2_*` — optional; see `.env.example`. Set `R2_PUBLIC_URL` before the first deploy, as
-     it is read at build time for `next/image`.
+   - `R2_BUCKET`, `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` — optional, but
+     all four together. Media then lives in R2 rather than on the container filesystem.
+   - `R2_PUBLIC_URL` — optional, and only useful as a **build arg**. next/image bakes its
+     allowed remote hosts into the build output, so setting this at runtime alone leaves the
+     host unallowlisted and images fail. Leave it unset to serve media through this server,
+     which is the simpler default.
 3. In the **Domains** tab add the domain, service `web`, container port `3000`, HTTPS on
    with Let's Encrypt.
 4. Point DNS at the VPS before deploying, or certificate issuance fails:
