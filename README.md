@@ -155,13 +155,17 @@ container, tags fire once with no consent signal and set cookies regardless.
 
 ## Deployment (Dokploy)
 
-Deployed as a **Docker Compose** application on a self-hosted Dokploy VPS. Dokploy's Traefik
-terminates TLS and routes to the container over the shared `dokploy-network`, so
-`docker-compose.yml` publishes **no host ports** — it only `expose`s 3000.
+Deployed on a self-hosted Dokploy VPS at https://benjaminrutter.com, built **from the
+Dockerfile** as a Dokploy *Application*, not from `docker-compose.yml`. That file is kept for
+reference and for running the stack locally, but production does not read it: environment
+variables come from Dokploy's Environment tab, and any volume must be added as a mount in the
+Dokploy UI.
+
+Media lives in Cloudflare R2, so the container holds no state. Content lives in Postgres.
 
 **One-time setup in Dokploy:**
 
-1. Create a Compose application pointing at this repository.
+1. Create an Application pointing at this repository, building from the Dockerfile.
 2. Set these in the **Environment** tab:
    - `DATABASE_URI` — the Postgres connection string. Dokploy supplies this
      automatically when a Postgres service is attached to the app.
