@@ -37,7 +37,7 @@ export const Work: GlobalConfig = {
               type: 'textarea',
               label: 'Intro',
               defaultValue:
-                'Senso Studio. Strategy, brand, product and systems for growth-stage companies.',
+                'The studio, the ventures around it, and advisory work with founders and operators.',
             },
             {
               name: 'body',
@@ -48,7 +48,8 @@ export const Work: GlobalConfig = {
               defaultValue: () =>
                 lexicalParagraphs([
                   'Senso is a brand, product and venture studio. We work with internet-first, growth-stage companies across the UK, EU and MENA, run across two entities, one UK and one UAE.',
-                  'The work is positioning, identity and product that make a new company look and feel like it has been around for years. Behind it sits the operational spine: pipeline, finance, automation and delivery.',
+                  'The work is positioning, identity and product that make a new company look and feel like it has been around for years. Behind it sits the operational side: finance, automation, delivery and the systems that let a lean team run.',
+                  'Some of that is client work. Some is ventures I have built or backed. And some is advisory, working directly with founders and operators on the same problems.',
                 ]),
             },
             {
@@ -156,12 +157,12 @@ export const Work: GlobalConfig = {
                     {
                       title: 'The operating spine',
                       description:
-                        'Pipeline, finance, automation and delivery, so a lean team can punch above its size.',
+                        'Finance, automation and delivery, so a lean team can punch above its size.',
                     },
                     {
                       title: 'Across industries',
                       description:
-                        'Hundreds of brands in very different sectors, and the problems tend to rhyme.',
+                        'A lot of brands in very different sectors, and the problems tend to rhyme.',
                     },
                   ],
                   fields: [

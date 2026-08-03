@@ -66,7 +66,7 @@ export const Home: GlobalConfig = {
                 {
                   title: 'About',
                   description:
-                    'I picked up Adobe at eight and never put it down. Since then, hundreds of brands across very different industries. Most brand people cannot build systems, most ops people cannot build brand. I do both.',
+                    'I picked up Adobe at eight and never put it down. Since then, a lot of brands across a lot of industries. Most brand people cannot build systems, most ops people cannot build brand. I do both.',
                   tags: [{ label: 'Brand' }, { label: 'Product' }, { label: 'Operations' }],
                   url: '/about',
                 },

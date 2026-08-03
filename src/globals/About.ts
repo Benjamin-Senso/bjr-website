@@ -43,10 +43,10 @@ export const About: GlobalConfig = {
               // JSON break the generated SQL.
               defaultValue: () =>
                 lexicalParagraphs([
-                "I picked up Adobe's design tools at eight and never really put them down. Since then I have worked with hundreds of brands, and the draw has always been the range: getting inside very different industries and learning how each one actually works.",
+                "I picked up Adobe's design tools at eight and never really put them down. Since then I have worked with a lot of brands, and the draw has always been the range: getting inside very different industries and learning how each one actually works.",
                 'That breadth is the useful part. The problems rhyme across sectors, and what works in one usually transfers to the next.',
                 'Senso is where it all meets. A brand, product and venture studio working with internet-first, growth-stage companies across the UK, EU and MENA, run across two entities, one UK and one UAE.',
-                'I built the studio and the machine behind it. The brand work clients see, and the commercial and operational systems that make a lean studio run: pipeline, finance, automation, delivery.',
+                'I built the studio and the machine behind it. The brand work clients see, and the commercial and operational systems that make a lean studio run: finance, automation, delivery.',
                 'Most brand people cannot build systems. Most ops people cannot build brand. I do both, and I have done it building a real business across two jurisdictions.',
               ]),
             },
@@ -78,7 +78,7 @@ export const About: GlobalConfig = {
                 {
                   title: 'The operational spine',
                   description:
-                    'The pipeline, finance and automation that let a lean team punch above its size.',
+                    'The finance, automation and delivery systems that let a lean team punch above its size.',
                 },
                 {
                   title: 'Ventures',
