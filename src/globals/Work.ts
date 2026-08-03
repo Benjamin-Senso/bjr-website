@@ -1,6 +1,11 @@
 import type { GlobalConfig } from 'payload'
 import { seoTab } from './fields/seo'
+import { lexicalParagraphs } from './fields/lexical'
 
+/**
+ * The studio page. Deliberately does not duplicate sensostudio.co: it tells the
+ * Senso story and links out. Ventures live in their own collection.
+ */
 export const Work: GlobalConfig = {
   slug: 'work',
   label: 'Work Page',
@@ -8,7 +13,7 @@ export const Work: GlobalConfig = {
     read: () => true,
   },
   admin: {
-    description: 'The /work page — the ventures and companies you are behind.',
+    description: 'The /work page. Senso and selected proof, linking out to the studio site.',
   },
   fields: [
     {
@@ -27,66 +32,64 @@ export const Work: GlobalConfig = {
               name: 'intro',
               type: 'textarea',
               label: 'Intro',
-              admin: {
-                description: 'One or two lines directly under the heading.',
-              },
+              defaultValue:
+                'Senso Studio. Strategy, brand, product and systems for growth-stage companies.',
             },
             {
-              name: 'ventures',
+              name: 'body',
+              type: 'richText',
+              label: 'Body',
+              // Function default: a static one is baked into the column DDL,
+              // which breaks on apostrophes inside the JSON.
+              defaultValue: () =>
+                lexicalParagraphs([
+                  'Senso is a brand, product and venture studio. We work with internet-first, growth-stage companies across the UK, EU and MENA, run across two entities, one UK and one UAE.',
+                  'The work is positioning, identity and product that make a new company look and feel like it has been around for years. Behind it sits the operational spine: pipeline, finance, automation and delivery.',
+                ]),
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'studioUrl',
+                  type: 'text',
+                  label: 'Studio URL',
+                  defaultValue: 'https://sensostudio.co',
+                  admin: { width: '65%' },
+                },
+                {
+                  name: 'studioLinkLabel',
+                  type: 'text',
+                  label: 'Link Label',
+                  defaultValue: 'Visit Senso Studio',
+                  admin: { width: '35%' },
+                },
+              ],
+            },
+            {
+              name: 'proof',
               type: 'array',
-              label: 'Ventures',
-              labels: { singular: 'Venture', plural: 'Ventures' },
+              label: 'Selected Proof',
+              labels: { singular: 'Item', plural: 'Items' },
               admin: {
-                description: 'Each venture renders as a glass card.',
+                description:
+                  'Selected work or outcomes. Keep it short and link out rather than duplicating case studies.',
                 initCollapsed: true,
               },
               fields: [
                 {
-                  name: 'logo',
-                  type: 'upload',
-                  relationTo: 'media',
-                  label: 'Logo',
-                  admin: { description: 'Square logo or mark. Optional.' },
-                },
-                {
                   type: 'row',
                   fields: [
-                    { name: 'name', type: 'text', required: true, admin: { width: '60%' } },
+                    { name: 'title', type: 'text', required: true, admin: { width: '60%' } },
                     {
-                      name: 'role',
+                      name: 'meta',
                       type: 'text',
-                      admin: { width: '40%', description: 'e.g. Founder, Partner.' },
+                      admin: { width: '40%', description: 'e.g. Brand and product, 2025.' },
                     },
                   ],
                 },
-                {
-                  name: 'description',
-                  type: 'textarea',
-                  label: 'Description',
-                },
-                {
-                  type: 'row',
-                  fields: [
-                    {
-                      name: 'url',
-                      type: 'text',
-                      label: 'URL',
-                      admin: { width: '70%' },
-                    },
-                    {
-                      name: 'status',
-                      type: 'select',
-                      defaultValue: 'active',
-                      admin: { width: '30%' },
-                      options: [
-                        { label: 'Active', value: 'active' },
-                        { label: 'Exited', value: 'exited' },
-                        { label: 'Advisory', value: 'advisory' },
-                        { label: 'Building', value: 'building' },
-                      ],
-                    },
-                  ],
-                },
+                { name: 'description', type: 'textarea' },
+                { name: 'url', type: 'text', label: 'URL' },
               ],
             },
           ],

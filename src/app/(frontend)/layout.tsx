@@ -5,8 +5,9 @@ import React from 'react'
 import './styles.css'
 import { AuroraBackdrop } from './components/AuroraBackdrop'
 import { GlassFilter } from './components/GlassFilter'
-import { Nav } from './components/Nav'
+import { Nav, type NavRoute } from './components/Nav'
 import { Footer } from './components/Footer'
+import { isBeehiivConfigured } from '@/lib/beehiiv'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,14 +25,28 @@ const instrumentSerif = Instrument_Serif({
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const payload = await getPayload({ config })
-  const settings = await payload.findGlobal({ slug: 'site-settings' })
+
+  const [settings, ventures] = await Promise.all([
+    payload.findGlobal({ slug: 'site-settings' }),
+    payload.count({ collection: 'ventures' }),
+  ])
+
+  // One good page beats five thin ones: routes that have nothing to show yet
+  // stay out of the nav and appear on their own once there is content.
+  const routes: NavRoute[] = [
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/work', label: 'Work' },
+    ...(ventures.totalDocs > 0 ? [{ href: '/ventures', label: 'Ventures' }] : []),
+    ...(isBeehiivConfigured() ? [{ href: '/writing', label: 'Writing' }] : []),
+  ]
 
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
       <body>
         <GlassFilter />
         <AuroraBackdrop />
-        <Nav />
+        <Nav routes={routes} cta={{ href: '/contact', label: 'Contact' }} />
         {children}
         <Footer text={settings?.footerText} />
       </body>

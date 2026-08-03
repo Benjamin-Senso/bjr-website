@@ -32,6 +32,7 @@ export const Writing: GlobalConfig = {
               name: 'intro',
               type: 'textarea',
               label: 'Intro',
+              defaultValue: 'Occasional notes on building brands, and the businesses behind them.',
               admin: {
                 description: 'One or two lines directly under the heading.',
               },
@@ -55,7 +56,7 @@ export const Writing: GlobalConfig = {
               name: 'subscribeBlurb',
               type: 'text',
               label: 'Subscribe Blurb',
-              defaultValue: 'Occasional notes on building products, brands and companies.',
+              defaultValue: 'Occasional notes on building brands, and the businesses behind them.',
               admin: {
                 condition: (_, siblingData) => Boolean(siblingData?.showSubscribe),
               },

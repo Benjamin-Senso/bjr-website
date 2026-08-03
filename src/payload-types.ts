@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    ventures: Venture;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    ventures: VenturesSelect<false> | VenturesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -92,6 +94,7 @@ export interface Config {
     home: Home;
     about: About;
     work: Work;
+    'ventures-page': VenturesPage;
     writing: Writing;
     contact: Contact;
   };
@@ -100,6 +103,7 @@ export interface Config {
     home: HomeSelect<false> | HomeSelect<true>;
     about: AboutSelect<false> | AboutSelect<true>;
     work: WorkSelect<false> | WorkSelect<true>;
+    'ventures-page': VenturesPageSelect<false> | VenturesPageSelect<true>;
     writing: WritingSelect<false> | WritingSelect<true>;
     contact: ContactSelect<false> | ContactSelect<true>;
   };
@@ -179,6 +183,40 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Things you have built or backed. Shown on /ventures, newest first.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ventures".
+ */
+export interface Venture {
+  id: number;
+  name: string;
+  /**
+   * Square logo or mark. Optional.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * e.g. Founder, Partner, Advisor.
+   */
+  role?: string | null;
+  status?: ('active' | 'building' | 'advisory' | 'exited') | null;
+  /**
+   * One or two lines. Keep it plain.
+   */
+  description?: string | null;
+  url?: string | null;
+  /**
+   * e.g. 2024, or 2021 to 2023.
+   */
+  year?: string | null;
+  /**
+   * Lower numbers appear first.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -209,6 +247,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'ventures';
+        value: number | Venture;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -291,6 +333,22 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ventures_select".
+ */
+export interface VenturesSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  role?: T;
+  status?: T;
+  description?: T;
+  url?: T;
+  year?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -399,30 +457,28 @@ export interface SiteSetting {
 export interface Home {
   id: number;
   /**
-   * A short one or two line intro shown under your name.
+   * The one line under your name. Lead with the intersection.
    */
   bio: string;
   /**
-   * Each tab is a group of link cards. The first tab is selected by default. If there is only one tab, the tab bar is hidden.
+   * A short paragraph under the intro. Keep it to two or three lines.
    */
-  linkGroups?:
+  statement?: string | null;
+  /**
+   * The clear next step. Keep this to a handful, the nav already covers the rest.
+   */
+  links?:
     | {
-        label: string;
         /**
-         * Each link is a glass card: thumbnail, title and short description.
+         * Small image shown on the left of the card. Optional.
          */
-        links?:
-          | {
-              /**
-               * Small image shown on the left of the card. Optional.
-               */
-              image?: (number | null) | Media;
-              title: string;
-              description?: string | null;
-              url: string;
-              id?: string | null;
-            }[]
-          | null;
+        image?: (number | null) | Media;
+        title: string;
+        description?: string | null;
+        /**
+         * An external URL, or an internal path such as /ventures.
+         */
+        url: string;
         id?: string | null;
       }[]
     | null;
@@ -450,13 +506,7 @@ export interface Home {
 export interface About {
   id: number;
   heading: string;
-  /**
-   * One or two lines directly under the heading.
-   */
   intro?: string | null;
-  /**
-   * The long-form bio.
-   */
   body?: {
     root: {
       type: string;
@@ -476,6 +526,16 @@ export interface About {
    * Optional image shown alongside the bio.
    */
   portrait?: (number | null) | Media;
+  /**
+   * Kept deliberately light. Position by proof, not by title. Expand into its own page only when advisory work is real.
+   */
+  helpWith?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Optional short label/value pairs shown as a small grid, e.g. "Based / Dubai".
    */
@@ -502,7 +562,7 @@ export interface About {
   createdAt?: string | null;
 }
 /**
- * The /work page — the ventures and companies you are behind.
+ * The /work page. Senso and selected proof, linking out to the studio site.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "work".
@@ -510,30 +570,64 @@ export interface About {
 export interface Work {
   id: number;
   heading: string;
-  /**
-   * One or two lines directly under the heading.
-   */
   intro?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  studioUrl?: string | null;
+  studioLinkLabel?: string | null;
   /**
-   * Each venture renders as a glass card.
+   * Selected work or outcomes. Keep it short and link out rather than duplicating case studies.
    */
-  ventures?:
+  proof?:
     | {
+        title: string;
         /**
-         * Square logo or mark. Optional.
+         * e.g. Brand and product, 2025.
          */
-        logo?: (number | null) | Media;
-        name: string;
-        /**
-         * e.g. Founder, Partner.
-         */
-        role?: string | null;
+        meta?: string | null;
         description?: string | null;
         url?: string | null;
-        status?: ('active' | 'exited' | 'advisory' | 'building') | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Browser tab title and search/social title for this page.
+   */
+  metaTitle?: string | null;
+  /**
+   * Short summary for search engines and link previews.
+   */
+  metaDescription?: string | null;
+  /**
+   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
+   */
+  ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Heading and intro for /ventures. Add the ventures themselves under Ventures.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ventures-page".
+ */
+export interface VenturesPage {
+  id: number;
+  heading: string;
+  intro?: string | null;
   /**
    * Browser tab title and search/social title for this page.
    */
@@ -649,19 +743,14 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  */
 export interface HomeSelect<T extends boolean = true> {
   bio?: T;
-  linkGroups?:
+  statement?: T;
+  links?:
     | T
     | {
-        label?: T;
-        links?:
-          | T
-          | {
-              image?: T;
-              title?: T;
-              description?: T;
-              url?: T;
-              id?: T;
-            };
+        image?: T;
+        title?: T;
+        description?: T;
+        url?: T;
         id?: T;
       };
   metaTitle?: T;
@@ -680,6 +769,13 @@ export interface AboutSelect<T extends boolean = true> {
   intro?: T;
   body?: T;
   portrait?: T;
+  helpWith?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
   facts?:
     | T
     | {
@@ -701,17 +797,32 @@ export interface AboutSelect<T extends boolean = true> {
 export interface WorkSelect<T extends boolean = true> {
   heading?: T;
   intro?: T;
-  ventures?:
+  body?: T;
+  studioUrl?: T;
+  studioLinkLabel?: T;
+  proof?:
     | T
     | {
-        logo?: T;
-        name?: T;
-        role?: T;
+        title?: T;
+        meta?: T;
         description?: T;
         url?: T;
-        status?: T;
         id?: T;
       };
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ventures-page_select".
+ */
+export interface VenturesPageSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
   metaTitle?: T;
   metaDescription?: T;
   ogImage?: T;

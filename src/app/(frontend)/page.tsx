@@ -3,7 +3,7 @@ import config from '@payload-config'
 import './styles.css'
 import { Hero } from './components/Hero'
 import { Socials } from './components/Socials'
-import { LinkTabs } from './components/LinkTabs'
+import { LinkCard } from './components/LinkCard'
 import { PageShell } from './components/PageShell'
 import { buildMetadata } from './lib/metadata'
 
@@ -23,11 +23,27 @@ export default async function HomePage() {
     payload.findGlobal({ slug: 'site-settings' }),
   ])
 
+  const links = home.links ?? []
+
   return (
     <PageShell width="narrow">
       <Hero name={settings.name} bio={home.bio} profileImage={settings.profileImage} />
+
+      {home.statement ? (
+        <p className="text-muted mt-4 max-w-prose text-center leading-relaxed text-balance">
+          {home.statement}
+        </p>
+      ) : null}
+
       <Socials socials={settings.socials} />
-      <LinkTabs groups={home.linkGroups ?? []} />
+
+      {links.length ? (
+        <section className="mt-10 flex w-full flex-col gap-3">
+          {links.map((link) => (
+            <LinkCard key={link.id ?? link.url} link={link} />
+          ))}
+        </section>
+      ) : null}
     </PageShell>
   )
 }

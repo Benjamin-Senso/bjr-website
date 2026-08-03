@@ -7,10 +7,12 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Ventures } from './collections/Ventures'
 import { SiteSettings } from './globals/SiteSettings'
 import { Home } from './globals/Home'
 import { About } from './globals/About'
 import { Work } from './globals/Work'
+import { VenturesPage } from './globals/VenturesPage'
 import { Writing } from './globals/Writing'
 import { Contact } from './globals/Contact'
 
@@ -27,8 +29,8 @@ export default buildConfig({
       titleSuffix: '— BJR',
     },
   },
-  collections: [Users, Media],
-  globals: [SiteSettings, Home, About, Work, Writing, Contact],
+  collections: [Users, Media, Ventures],
+  globals: [SiteSettings, Home, About, Work, VenturesPage, Writing, Contact],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

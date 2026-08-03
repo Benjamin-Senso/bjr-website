@@ -27,6 +27,8 @@ export const Contact: GlobalConfig = {
               name: 'intro',
               type: 'textarea',
               label: 'Intro',
+              defaultValue:
+                'If you are building something and want brand and product that pulls commercial weight, get in touch.',
               admin: {
                 description: 'A short line about what to get in touch about.',
               },

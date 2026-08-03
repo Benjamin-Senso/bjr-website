@@ -1,26 +1,25 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { resolveMedia } from '../lib/media'
 import { useGlassPointer } from '../lib/useGlassPointer'
 import type { Home } from '@/payload-types'
 
-type LinkItem = NonNullable<NonNullable<Home['linkGroups']>[number]['links']>[number]
+type LinkItem = NonNullable<Home['links']>[number]
 
 export function LinkCard({ link }: { link: LinkItem }) {
   const thumb = resolveMedia(link.image)
   const { ref, onPointerMove, onPointerLeave } = useGlassPointer<HTMLAnchorElement>()
 
-  return (
-    <a
-      ref={ref}
-      onPointerMove={onPointerMove}
-      onPointerLeave={onPointerLeave}
-      href={link.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="liquid-glass group flex items-center gap-4 rounded-[20px] p-3 transition-[border-color] duration-200 hover:border-accent/45"
-    >
+  // Internal paths route client-side; anything else opens in a new tab.
+  const isInternal = link.url.startsWith('/')
+
+  const className =
+    'liquid-glass group flex items-center gap-4 rounded-[20px] p-3 transition-[border-color] duration-200 hover:border-accent/45'
+
+  const inner = (
+    <>
       <div className="relative h-13 w-13 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
         {thumb ? (
           <Image
@@ -50,6 +49,34 @@ export function LinkCard({ link }: { link: LinkItem }) {
       >
         →
       </span>
+    </>
+  )
+
+  if (isInternal) {
+    return (
+      <Link
+        ref={ref}
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
+        href={link.url}
+        className={className}
+      >
+        {inner}
+      </Link>
+    )
+  }
+
+  return (
+    <a
+      ref={ref}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+    >
+      {inner}
     </a>
   )
 }

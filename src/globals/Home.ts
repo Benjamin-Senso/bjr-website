@@ -2,9 +2,9 @@ import type { GlobalConfig } from 'payload'
 import { seoTab } from './fields/seo'
 
 /**
- * The landing route. Identity (name, avatar, socials, footer) now lives in
- * Site Settings because every route renders it — this global only owns what is
- * unique to the home page.
+ * The landing page: who I am, the intersection, one line on the studio, and a
+ * clear next step. Identity lives in Site Settings; the tabbed link groups are
+ * gone now that the nav does that job.
  */
 export const Home: GlobalConfig = {
   slug: 'home',
@@ -26,100 +26,68 @@ export const Home: GlobalConfig = {
               name: 'bio',
               type: 'textarea',
               required: true,
-              defaultValue:
-                'Founder and builder. I design and ship products, brands, and the systems behind them.',
+              defaultValue: 'I build brands, and the businesses behind them.',
               admin: {
-                description: 'A short one or two line intro shown under your name.',
+                description: 'The one line under your name. Lead with the intersection.',
               },
             },
             {
-              name: 'linkGroups',
+              name: 'statement',
+              type: 'textarea',
+              label: 'Statement',
+              defaultValue:
+                'Founder of Senso Studio, a brand, product and venture studio working with internet-first companies across the UK, EU and MENA. An operator as much as a designer.',
+              admin: {
+                description: 'A short paragraph under the intro. Keep it to two or three lines.',
+              },
+            },
+            {
+              name: 'links',
               type: 'array',
-              label: 'Link Tabs',
-              labels: { singular: 'Tab', plural: 'Tabs' },
-              minRows: 1,
+              label: 'Primary Links',
+              labels: { singular: 'Link', plural: 'Links' },
               admin: {
                 description:
-                  'Each tab is a group of link cards. The first tab is selected by default. If there is only one tab, the tab bar is hidden.',
-                initCollapsed: false,
+                  'The clear next step. Keep this to a handful, the nav already covers the rest.',
+                initCollapsed: true,
               },
               defaultValue: [
                 {
-                  label: 'Ventures',
-                  links: [
-                    {
-                      title: 'Project One',
-                      description: 'A short line about what this is.',
-                      url: 'https://example.com/',
-                    },
-                    {
-                      title: 'Project Two',
-                      description: 'Another short description.',
-                      url: 'https://example.com/',
-                    },
-                  ],
+                  title: 'Senso Studio',
+                  description: 'Brand, product and systems for growth-stage companies.',
+                  url: 'https://sensostudio.co',
                 },
                 {
-                  label: 'Social',
-                  links: [
-                    {
-                      title: 'Instagram',
-                      description: 'Follow along',
-                      url: 'https://instagram.com/',
-                    },
-                    {
-                      title: 'YouTube',
-                      description: 'Watch the latest',
-                      url: 'https://youtube.com/',
-                    },
-                  ],
+                  title: 'Ventures',
+                  description: 'Things I have built or backed.',
+                  url: '/ventures',
+                },
+                {
+                  title: 'Get in touch',
+                  description: 'For brand, product or advisory work.',
+                  url: '/contact',
                 },
               ],
               fields: [
                 {
-                  name: 'label',
-                  type: 'text',
-                  label: 'Tab Label',
-                  required: true,
-                },
-                {
-                  name: 'links',
-                  type: 'array',
-                  label: 'Links',
-                  labels: { singular: 'Link', plural: 'Links' },
-                  minRows: 1,
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Thumbnail',
                   admin: {
-                    description:
-                      'Each link is a glass card: thumbnail, title and short description.',
-                    initCollapsed: true,
+                    description: 'Small image shown on the left of the card. Optional.',
                   },
-                  fields: [
-                    {
-                      name: 'image',
-                      type: 'upload',
-                      relationTo: 'media',
-                      label: 'Thumbnail',
-                      admin: {
-                        description: 'Small image shown on the left of the card. Optional.',
-                      },
-                    },
-                    {
-                      name: 'title',
-                      type: 'text',
-                      required: true,
-                    },
-                    {
-                      name: 'description',
-                      type: 'text',
-                      label: 'Short Description',
-                    },
-                    {
-                      name: 'url',
-                      type: 'text',
-                      label: 'URL',
-                      required: true,
-                    },
-                  ],
+                },
+                { name: 'title', type: 'text', required: true },
+                { name: 'description', type: 'text', label: 'Short Description' },
+                {
+                  name: 'url',
+                  type: 'text',
+                  label: 'URL',
+                  required: true,
+                  admin: {
+                    description: 'An external URL, or an internal path such as /ventures.',
+                  },
                 },
               ],
             },

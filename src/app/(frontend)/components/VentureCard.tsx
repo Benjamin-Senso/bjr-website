@@ -1,14 +1,12 @@
 import Image from 'next/image'
-import type { Work } from '@/payload-types'
+import type { Venture } from '@/payload-types'
 import { resolveMedia } from '../lib/media'
-
-type Venture = NonNullable<Work['ventures']>[number]
 
 const STATUS_LABELS: Record<string, string> = {
   active: 'Active',
-  exited: 'Exited',
-  advisory: 'Advisory',
   building: 'Building',
+  advisory: 'Advisory',
+  exited: 'Exited',
 }
 
 export function VentureCard({ venture }: { venture: Venture }) {
@@ -29,7 +27,13 @@ export function VentureCard({ venture }: { venture: Venture }) {
       <div className="flex items-start gap-4">
         <div className="border-border relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border bg-white/[0.04]">
           {logo ? (
-            <Image src={logo.url} alt={logo.alt || venture.name} fill sizes="48px" className="object-cover" />
+            <Image
+              src={logo.url}
+              alt={logo.alt || venture.name}
+              fill
+              sizes="48px"
+              className="object-cover"
+            />
           ) : (
             <span className="text-muted flex h-full w-full items-center justify-center text-lg font-medium">
               {venture.name.charAt(0)}
@@ -41,6 +45,7 @@ export function VentureCard({ venture }: { venture: Venture }) {
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <h2 className="font-display text-xl font-normal">{venture.name}</h2>
             {venture.role ? <span className="text-muted text-sm">{venture.role}</span> : null}
+            {venture.year ? <span className="text-muted text-sm">{venture.year}</span> : null}
           </div>
           {venture.description ? (
             <p className="text-muted mt-1.5 text-sm leading-relaxed">{venture.description}</p>
