@@ -1,20 +1,39 @@
+# Deployed via Dokploy as a Docker Compose application.
+#
+# No ports are published to the host: Dokploy's Traefik reaches the container
+# over the shared `dokploy-network`, and TLS plus the domain are configured in
+# the Dokploy UI (Domains tab: service `web`, container port 3000). Publishing
+# 3000 here would expose the app directly, bypassing Traefik and its certificate.
 services:
   web:
     build: .
     image: bjr-website
     restart: unless-stopped
-    ports:
-      - '3000:3000'
+    expose:
+      - '3000'
     environment:
-      # Required: a long random string. Set this in a .env file next to this
-      # compose file (PAYLOAD_SECRET=...), or export it in your shell.
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET in .env}
+      # Required. A long random string. Set these in Dokploy's Environment tab
+      # rather than a .env file on the host.
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?set PAYLOAD_SECRET in Dokploy}
+      # The public origin, e.g. https://benjaminrutter.com. Read server-side to
+      # make OG image URLs absolute and to build the sitemap.
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?set NEXT_PUBLIC_SERVER_URL in Dokploy}
+      # Optional. Without both, /writing stays hidden from the nav.
+      BEEHIIV_API_KEY: ${BEEHIIV_API_KEY:-}
+      BEEHIIV_PUBLICATION_ID: ${BEEHIIV_PUBLICATION_ID:-}
       # These match the Dockerfile defaults; override only if needed.
       DATABASE_URI: file:/app/data/bjr.db
       MEDIA_DIR: /app/data/media
     volumes:
-      # Persists the SQLite database and uploaded media across restarts/redeploys.
+      # The SQLite database AND all uploaded media live here. Without this
+      # volume a redeploy comes up with an empty CMS and no images.
       - bjr-data:/app/data
+    networks:
+      - dokploy-network
 
 volumes:
   bjr-data:
+
+networks:
+  dokploy-network:
+    external: true
