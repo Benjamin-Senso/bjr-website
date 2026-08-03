@@ -125,8 +125,29 @@ export const SiteSettings: GlobalConfig = {
               name: 'metaDescription',
               type: 'textarea',
               label: 'Fallback Meta Description',
+              defaultValue:
+                'Benjamin Rutter builds brands and the businesses behind them. Founder of Senso Studio, a brand, product and venture studio working with internet-first companies across the UK, EU and MENA.',
               admin: {
                 description: 'Used on any page that has not set its own description.',
+              },
+            },
+            {
+              name: 'keywords',
+              type: 'text',
+              label: 'Site-wide Keywords',
+              defaultValue:
+                'Benjamin Rutter, Senso Studio, brand studio, product studio, venture studio, brand strategy, brand identity, advisory, consultancy, founder, UK, UAE, MENA',
+              admin: {
+                description: 'Comma separated. Appended to each page’s own keywords.',
+              },
+            },
+            {
+              name: 'jobTitle',
+              type: 'text',
+              label: 'Job Title',
+              defaultValue: 'Founder, Senso Studio',
+              admin: {
+                description: 'Used in the Person structured data that search engines read.',
               },
             },
             {

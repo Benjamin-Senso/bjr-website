@@ -47,24 +47,54 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`CREATE INDEX \`media_updated_at_idx\` ON \`media\` (\`updated_at\`);`)
   await db.run(sql`CREATE INDEX \`media_created_at_idx\` ON \`media\` (\`created_at\`);`)
   await db.run(sql`CREATE UNIQUE INDEX \`media_filename_idx\` ON \`media\` (\`filename\`);`)
-  await db.run(sql`CREATE TABLE \`ventures\` (
+  await db.run(sql`CREATE TABLE \`work_items_gallery\` (
+  	\`_order\` integer NOT NULL,
+  	\`_parent_id\` integer NOT NULL,
+  	\`id\` text PRIMARY KEY NOT NULL,
+  	\`image_id\` integer NOT NULL,
+  	\`caption\` text,
+  	FOREIGN KEY (\`image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null,
+  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`work_items\`(\`id\`) ON UPDATE no action ON DELETE cascade
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`work_items_gallery_order_idx\` ON \`work_items_gallery\` (\`_order\`);`)
+  await db.run(sql`CREATE INDEX \`work_items_gallery_parent_id_idx\` ON \`work_items_gallery\` (\`_parent_id\`);`)
+  await db.run(sql`CREATE INDEX \`work_items_gallery_image_idx\` ON \`work_items_gallery\` (\`image_id\`);`)
+  await db.run(sql`CREATE TABLE \`work_items\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`name\` text NOT NULL,
-  	\`logo_id\` integer,
+  	\`slug\` text,
+  	\`cover_image_id\` integer,
+  	\`type\` text DEFAULT 'venture' NOT NULL,
   	\`role\` text,
-  	\`status\` text DEFAULT 'active',
   	\`description\` text,
+  	\`body\` text,
   	\`url\` text,
   	\`year\` text,
+  	\`status\` text,
   	\`order\` numeric DEFAULT 0,
   	\`updated_at\` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,
   	\`created_at\` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,
-  	FOREIGN KEY (\`logo_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
+  	FOREIGN KEY (\`cover_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`CREATE INDEX \`ventures_logo_idx\` ON \`ventures\` (\`logo_id\`);`)
-  await db.run(sql`CREATE INDEX \`ventures_updated_at_idx\` ON \`ventures\` (\`updated_at\`);`)
-  await db.run(sql`CREATE INDEX \`ventures_created_at_idx\` ON \`ventures\` (\`created_at\`);`)
+  await db.run(sql`CREATE UNIQUE INDEX \`work_items_slug_idx\` ON \`work_items\` (\`slug\`);`)
+  await db.run(sql`CREATE INDEX \`work_items_cover_image_idx\` ON \`work_items\` (\`cover_image_id\`);`)
+  await db.run(sql`CREATE INDEX \`work_items_updated_at_idx\` ON \`work_items\` (\`updated_at\`);`)
+  await db.run(sql`CREATE INDEX \`work_items_created_at_idx\` ON \`work_items\` (\`created_at\`);`)
+  await db.run(sql`CREATE TABLE \`contact_submissions\` (
+  	\`id\` integer PRIMARY KEY NOT NULL,
+  	\`name\` text NOT NULL,
+  	\`email\` text NOT NULL,
+  	\`subject\` text,
+  	\`message\` text NOT NULL,
+  	\`handled\` integer DEFAULT false,
+  	\`updated_at\` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,
+  	\`created_at\` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`contact_submissions_updated_at_idx\` ON \`contact_submissions\` (\`updated_at\`);`)
+  await db.run(sql`CREATE INDEX \`contact_submissions_created_at_idx\` ON \`contact_submissions\` (\`created_at\`);`)
   await db.run(sql`CREATE TABLE \`payload_kv\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`key\` text NOT NULL,
@@ -89,11 +119,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`path\` text NOT NULL,
   	\`users_id\` integer,
   	\`media_id\` integer,
-  	\`ventures_id\` integer,
+  	\`work_items_id\` integer,
+  	\`contact_submissions_id\` integer,
   	FOREIGN KEY (\`parent_id\`) REFERENCES \`payload_locked_documents\`(\`id\`) ON UPDATE no action ON DELETE cascade,
   	FOREIGN KEY (\`users_id\`) REFERENCES \`users\`(\`id\`) ON UPDATE no action ON DELETE cascade,
   	FOREIGN KEY (\`media_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE cascade,
-  	FOREIGN KEY (\`ventures_id\`) REFERENCES \`ventures\`(\`id\`) ON UPDATE no action ON DELETE cascade
+  	FOREIGN KEY (\`work_items_id\`) REFERENCES \`work_items\`(\`id\`) ON UPDATE no action ON DELETE cascade,
+  	FOREIGN KEY (\`contact_submissions_id\`) REFERENCES \`contact_submissions\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
   await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_order_idx\` ON \`payload_locked_documents_rels\` (\`order\`);`)
@@ -101,7 +133,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_path_idx\` ON \`payload_locked_documents_rels\` (\`path\`);`)
   await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_users_id_idx\` ON \`payload_locked_documents_rels\` (\`users_id\`);`)
   await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_media_id_idx\` ON \`payload_locked_documents_rels\` (\`media_id\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_ventures_id_idx\` ON \`payload_locked_documents_rels\` (\`ventures_id\`);`)
+  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_work_items_id_idx\` ON \`payload_locked_documents_rels\` (\`work_items_id\`);`)
+  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_contact_submissions_id_idx\` ON \`payload_locked_documents_rels\` (\`contact_submissions_id\`);`)
   await db.run(sql`CREATE TABLE \`payload_preferences\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`key\` text,
@@ -154,7 +187,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`name\` text DEFAULT 'Benjamin Rutter' NOT NULL,
   	\`footer_text\` text DEFAULT '© 2026 Benjamin Rutter',
   	\`meta_title_suffix\` text DEFAULT 'Benjamin Rutter',
-  	\`meta_description\` text,
+  	\`meta_description\` text DEFAULT 'Benjamin Rutter builds brands and the businesses behind them. Founder of Senso Studio, a brand, product and venture studio working with internet-first companies across the UK, EU and MENA.',
+  	\`keywords\` text DEFAULT 'Benjamin Rutter, Senso Studio, brand studio, product studio, venture studio, brand strategy, brand identity, advisory, consultancy, founder, UK, UAE, MENA',
+  	\`job_title\` text DEFAULT 'Founder, Senso Studio',
   	\`og_image_id\` integer,
   	\`updated_at\` text,
   	\`created_at\` text,
@@ -195,6 +230,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`statement\` text DEFAULT 'Founder of Senso Studio, a brand, product and venture studio working with internet-first companies across the UK, EU and MENA. An operator as much as a designer.',
   	\`meta_title\` text DEFAULT 'Benjamin Rutter',
   	\`meta_description\` text,
+  	\`keywords\` text,
   	\`og_image_id\` integer,
   	\`updated_at\` text,
   	\`created_at\` text,
@@ -232,6 +268,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`portrait_id\` integer,
   	\`meta_title\` text DEFAULT 'About',
   	\`meta_description\` text,
+  	\`keywords\` text,
   	\`og_image_id\` integer,
   	\`updated_at\` text,
   	\`created_at\` text,
@@ -241,22 +278,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
   await db.run(sql`CREATE INDEX \`about_portrait_idx\` ON \`about\` (\`portrait_id\`);`)
   await db.run(sql`CREATE INDEX \`about_og_image_idx\` ON \`about\` (\`og_image_id\`);`)
-  await db.run(sql`CREATE TABLE \`work_projects\` (
-  	\`_order\` integer NOT NULL,
-  	\`_parent_id\` integer NOT NULL,
-  	\`id\` text PRIMARY KEY NOT NULL,
-  	\`cover_image_id\` integer,
-  	\`title\` text NOT NULL,
-  	\`meta\` text,
-  	\`description\` text,
-  	\`url\` text,
-  	FOREIGN KEY (\`cover_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null,
-  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`work\`(\`id\`) ON UPDATE no action ON DELETE cascade
-  );
-  `)
-  await db.run(sql`CREATE INDEX \`work_projects_order_idx\` ON \`work_projects\` (\`_order\`);`)
-  await db.run(sql`CREATE INDEX \`work_projects_parent_id_idx\` ON \`work_projects\` (\`_parent_id\`);`)
-  await db.run(sql`CREATE INDEX \`work_projects_cover_image_idx\` ON \`work_projects\` (\`cover_image_id\`);`)
   await db.run(sql`CREATE TABLE \`work_advisory_points\` (
   	\`_order\` integer NOT NULL,
   	\`_parent_id\` integer NOT NULL,
@@ -271,7 +292,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`CREATE TABLE \`work\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`heading\` text DEFAULT 'Work' NOT NULL,
-  	\`intro\` text DEFAULT 'Senso Studio. Strategy, brand, product and systems for growth-stage companies.',
+  	\`intro\` text DEFAULT 'The studio, the ventures around it, and advisory work with founders and operators.',
   	\`body\` text,
   	\`studio_url\` text DEFAULT 'https://sensostudio.co',
   	\`studio_link_label\` text DEFAULT 'Visit Senso Studio',
@@ -282,6 +303,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`advisory_cta_url\` text DEFAULT '/contact',
   	\`meta_title\` text DEFAULT 'Work',
   	\`meta_description\` text,
+  	\`keywords\` text,
   	\`og_image_id\` integer,
   	\`updated_at\` text,
   	\`created_at\` text,
@@ -289,19 +311,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   );
   `)
   await db.run(sql`CREATE INDEX \`work_og_image_idx\` ON \`work\` (\`og_image_id\`);`)
-  await db.run(sql`CREATE TABLE \`ventures_page\` (
-  	\`id\` integer PRIMARY KEY NOT NULL,
-  	\`heading\` text DEFAULT 'Ventures' NOT NULL,
-  	\`intro\` text DEFAULT 'Things I have built or backed, through Senso and its Ember partnerships.',
-  	\`meta_title\` text DEFAULT 'Ventures',
-  	\`meta_description\` text,
-  	\`og_image_id\` integer,
-  	\`updated_at\` text,
-  	\`created_at\` text,
-  	FOREIGN KEY (\`og_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
-  );
-  `)
-  await db.run(sql`CREATE INDEX \`ventures_page_og_image_idx\` ON \`ventures_page\` (\`og_image_id\`);`)
   await db.run(sql`CREATE TABLE \`writing\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`heading\` text DEFAULT 'Writing' NOT NULL,
@@ -312,6 +321,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`post_limit\` numeric DEFAULT 10,
   	\`meta_title\` text DEFAULT 'Writing',
   	\`meta_description\` text,
+  	\`keywords\` text,
   	\`og_image_id\` integer,
   	\`updated_at\` text,
   	\`created_at\` text,
@@ -323,11 +333,14 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`heading\` text DEFAULT 'Contact' NOT NULL,
   	\`intro\` text DEFAULT 'Studio work, advisory and consulting, or a venture you want a partner on. If you are building something and want brand and product that pulls commercial weight, get in touch.',
+  	\`show_form\` integer DEFAULT true,
+  	\`form_heading\` text DEFAULT 'Send a message',
   	\`email\` text,
   	\`availability\` text,
   	\`show_socials\` integer DEFAULT true,
   	\`meta_title\` text DEFAULT 'Contact',
   	\`meta_description\` text,
+  	\`keywords\` text,
   	\`og_image_id\` integer,
   	\`updated_at\` text,
   	\`created_at\` text,
@@ -341,7 +354,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.run(sql`DROP TABLE \`users_sessions\`;`)
   await db.run(sql`DROP TABLE \`users\`;`)
   await db.run(sql`DROP TABLE \`media\`;`)
-  await db.run(sql`DROP TABLE \`ventures\`;`)
+  await db.run(sql`DROP TABLE \`work_items_gallery\`;`)
+  await db.run(sql`DROP TABLE \`work_items\`;`)
+  await db.run(sql`DROP TABLE \`contact_submissions\`;`)
   await db.run(sql`DROP TABLE \`payload_kv\`;`)
   await db.run(sql`DROP TABLE \`payload_locked_documents\`;`)
   await db.run(sql`DROP TABLE \`payload_locked_documents_rels\`;`)
@@ -356,10 +371,8 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.run(sql`DROP TABLE \`about_help_with\`;`)
   await db.run(sql`DROP TABLE \`about_facts\`;`)
   await db.run(sql`DROP TABLE \`about\`;`)
-  await db.run(sql`DROP TABLE \`work_projects\`;`)
   await db.run(sql`DROP TABLE \`work_advisory_points\`;`)
   await db.run(sql`DROP TABLE \`work\`;`)
-  await db.run(sql`DROP TABLE \`ventures_page\`;`)
   await db.run(sql`DROP TABLE \`writing\`;`)
   await db.run(sql`DROP TABLE \`contact\`;`)
 }

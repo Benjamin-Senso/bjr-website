@@ -6,12 +6,14 @@ import { Prose } from '../components/Prose'
 import { resolveMedia } from '../lib/media'
 import { getGlobal } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
+import { JsonLd } from '../components/JsonLd'
+import { aboutPageSchema, breadcrumbSchema } from '../lib/schema'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
   const about = await getGlobal('about')
-  return buildMetadata(about, 'About')
+  return buildMetadata(about, 'About', '/about')
 }
 
 export default async function AboutPage() {
@@ -20,6 +22,16 @@ export default async function AboutPage() {
 
   return (
     <PageShell>
+      <JsonLd
+        data={[
+          aboutPageSchema(about.heading, about.intro),
+          breadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: about.heading, path: '/about' },
+          ]),
+        ]}
+      />
+
       <PageHeader heading={about.heading} intro={about.intro} />
 
       {portrait ? (

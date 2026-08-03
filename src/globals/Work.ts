@@ -72,46 +72,6 @@ export const Work: GlobalConfig = {
               ],
             },
             {
-              name: 'projects',
-              type: 'array',
-              label: 'Projects',
-              labels: { singular: 'Project', plural: 'Projects' },
-              admin: {
-                description:
-                  'Each project is an image panel. Link out rather than duplicating case studies.',
-                initCollapsed: true,
-              },
-              defaultValue: [
-                { title: 'Signet' },
-                { title: 'Senso', url: 'https://sensostudio.co' },
-                { title: 'Mandem Meetup' },
-              ],
-              fields: [
-                {
-                  name: 'coverImage',
-                  type: 'upload',
-                  relationTo: 'media',
-                  label: 'Cover Image',
-                  admin: {
-                    description: 'Shown at the top of the panel. Landscape works best (16:9).',
-                  },
-                },
-                {
-                  type: 'row',
-                  fields: [
-                    { name: 'title', type: 'text', required: true, admin: { width: '60%' } },
-                    {
-                      name: 'meta',
-                      type: 'text',
-                      admin: { width: '40%', description: 'e.g. Brand and product, 2025.' },
-                    },
-                  ],
-                },
-                { name: 'description', type: 'textarea' },
-                { name: 'url', type: 'text', label: 'URL' },
-              ],
-            },
-            {
               name: 'advisory',
               type: 'group',
               label: 'Advisory',

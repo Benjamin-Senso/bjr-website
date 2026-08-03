@@ -5,7 +5,9 @@ import { AuroraBackdrop } from './components/AuroraBackdrop'
 import { GlassFilter } from './components/GlassFilter'
 import { Nav, type NavRoute } from './components/Nav'
 import { Footer } from './components/Footer'
-import { getGlobal, getVenturesCount } from './lib/content'
+import { JsonLd } from './components/JsonLd'
+import { getGlobal } from './lib/content'
+import { personSchema, websiteSchema } from './lib/schema'
 import { isBeehiivConfigured } from '@/lib/beehiiv'
 
 const inter = Inter({
@@ -23,25 +25,23 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [settings, venturesCount] = await Promise.all([
-    getGlobal('site-settings'),
-    getVenturesCount(),
-  ])
+  const settings = await getGlobal('site-settings')
 
   // Work before About: the studio is the proof, the story comes second.
-  // Routes with nothing behind them yet stay out rather than leading somewhere
-  // empty, and appear on their own once there is content.
   const routes: NavRoute[] = [
     { href: '/', label: 'Home' },
     { href: '/work', label: 'Work' },
     { href: '/about', label: 'About' },
-    ...(venturesCount > 0 ? [{ href: '/ventures', label: 'Ventures' }] : []),
+    // Writing only appears once the newsletter is actually connected.
     ...(isBeehiivConfigured() ? [{ href: '/writing', label: 'Writing' }] : []),
   ]
 
   return (
-    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html lang="en-GB" className={`${inter.variable} ${instrumentSerif.variable}`}>
       <body>
+        {/* Emitted once with stable @ids so per-page schema can reference these
+            entities instead of repeating them. */}
+        <JsonLd data={[personSchema(settings), websiteSchema(settings)]} />
         <GlassFilter />
         <AuroraBackdrop />
         <Nav routes={routes} cta={{ href: '/contact', label: 'Contact' }} />

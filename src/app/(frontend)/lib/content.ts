@@ -6,7 +6,7 @@ import type { Config } from '@/payload-types'
 type GlobalSlug = keyof Config['globals']
 
 export const globalTag = (slug: string) => `global:${slug}`
-export const VENTURES_TAG = 'collection:ventures'
+export const WORK_ITEMS_TAG = 'collection:work-items'
 
 /**
  * Routes stay dynamic so `next build` never needs a database (the Docker image
@@ -25,27 +25,34 @@ export function getGlobal<T extends GlobalSlug>(slug: T): Promise<Config['global
   )() as Promise<Config['globals'][T]>
 }
 
-export const getVentures = unstable_cache(
+export function getWorkItem(slug: string) {
+  return unstable_cache(
+    async () => {
+      const payload = await getPayload({ config: payloadConfig })
+      const result = await payload.find({
+        collection: 'work-items',
+        where: { slug: { equals: slug } },
+        limit: 1,
+        depth: 2,
+      })
+      return result.docs[0] ?? null
+    },
+    ['work-item', slug],
+    { tags: [WORK_ITEMS_TAG], revalidate: 300 },
+  )()
+}
+
+export const getWorkItems = unstable_cache(
   async () => {
     const payload = await getPayload({ config: payloadConfig })
     const result = await payload.find({
-      collection: 'ventures',
-      limit: 100,
+      collection: 'work-items',
+      limit: 200,
       sort: 'order',
       depth: 2,
     })
     return result.docs
   },
-  ['ventures'],
-  { tags: [VENTURES_TAG], revalidate: 300 },
-)
-
-export const getVenturesCount = unstable_cache(
-  async () => {
-    const payload = await getPayload({ config: payloadConfig })
-    const result = await payload.count({ collection: 'ventures' })
-    return result.totalDocs
-  },
-  ['ventures-count'],
-  { tags: [VENTURES_TAG], revalidate: 300 },
+  ['work-items'],
+  { tags: [WORK_ITEMS_TAG], revalidate: 300 },
 )

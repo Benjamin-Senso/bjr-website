@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
   const home = await getGlobal('home')
-  return buildMetadata(home, 'Benjamin Rutter')
+  return buildMetadata(home, 'Benjamin Rutter', '/')
 }
 
 export default async function HomePage() {

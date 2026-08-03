@@ -38,6 +38,22 @@ export const Contact: GlobalConfig = {
               },
             },
             {
+              name: 'showForm',
+              type: 'checkbox',
+              label: 'Show contact form',
+              defaultValue: true,
+              admin: {
+                description: 'Messages are stored in the CMS under Messages.',
+              },
+            },
+            {
+              name: 'formHeading',
+              type: 'text',
+              label: 'Form Heading',
+              defaultValue: 'Send a message',
+              admin: { condition: (_, s) => s?.showForm !== false },
+            },
+            {
               name: 'email',
               type: 'text',
               label: 'Email Address',

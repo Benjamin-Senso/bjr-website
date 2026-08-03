@@ -4,22 +4,33 @@ import { PageHeader } from '../components/PageHeader'
 import { Prose } from '../components/Prose'
 import { WorkGrid } from '../components/WorkGrid'
 import { AdvisorySection } from '../components/AdvisorySection'
-import { getGlobal, getVentures } from '../lib/content'
+import { JsonLd } from '../components/JsonLd'
+import { getGlobal, getWorkItems } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
+import { breadcrumbSchema, workCollectionSchema } from '../lib/schema'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
   const work = await getGlobal('work')
-  return buildMetadata(work, 'Work')
+  return buildMetadata(work, 'Work', '/work')
 }
 
 export default async function WorkPage() {
-  const [work, ventures] = await Promise.all([getGlobal('work'), getVentures()])
-  const projects = work.projects ?? []
+  const [work, items] = await Promise.all([getGlobal('work'), getWorkItems()])
 
   return (
     <PageShell width="grid">
+      <JsonLd
+        data={[
+          workCollectionSchema(items, work.heading, work.intro ?? undefined),
+          breadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: work.heading, path: '/work' },
+          ]),
+        ]}
+      />
+
       <PageHeader heading={work.heading} intro={work.intro} />
 
       {work.body ? (
@@ -42,7 +53,7 @@ export default async function WorkPage() {
         </a>
       ) : null}
 
-      <WorkGrid projects={projects} ventures={ventures} />
+      <WorkGrid items={items} />
 
       <AdvisorySection advisory={work.advisory} />
     </PageShell>

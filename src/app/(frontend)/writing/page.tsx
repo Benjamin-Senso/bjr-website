@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
   const writing = await getGlobal('writing')
-  return buildMetadata(writing, 'Writing')
+  return buildMetadata(writing, 'Writing', '/writing')
 }
 
 export default async function WritingPage() {

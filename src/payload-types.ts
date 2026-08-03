@@ -69,7 +69,8 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    ventures: Venture;
+    'work-items': WorkItem;
+    'contact-submissions': ContactSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -79,7 +80,8 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    ventures: VenturesSelect<false> | VenturesSelect<true>;
+    'work-items': WorkItemsSelect<false> | WorkItemsSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -94,7 +96,6 @@ export interface Config {
     home: Home;
     about: About;
     work: Work;
-    'ventures-page': VenturesPage;
     writing: Writing;
     contact: Contact;
   };
@@ -103,7 +104,6 @@ export interface Config {
     home: HomeSelect<false> | HomeSelect<true>;
     about: AboutSelect<false> | AboutSelect<true>;
     work: WorkSelect<false> | WorkSelect<true>;
-    'ventures-page': VenturesPageSelect<false> | VenturesPageSelect<true>;
     writing: WritingSelect<false> | WritingSelect<true>;
     contact: ContactSelect<false> | ContactSelect<true>;
   };
@@ -183,36 +183,94 @@ export interface Media {
   focalY?: number | null;
 }
 /**
- * Things you have built or backed. Shown on /ventures, newest first.
+ * Companies, ventures, projects and involvements shown on /work.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ventures".
+ * via the `definition` "work-items".
  */
-export interface Venture {
+export interface WorkItem {
   id: number;
   name: string;
   /**
-   * Square logo or mark. Optional.
+   * The URL, e.g. /work/signet. Generated from the name if left blank.
    */
-  logo?: (number | null) | Media;
+  slug?: string | null;
   /**
-   * e.g. Founder, Partner, Advisor.
+   * Shown on the card and at the top of the page. Landscape (16:9).
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Drives which filter the entry appears under.
+   */
+  type: 'company' | 'venture' | 'project' | 'involvement';
+  /**
+   * e.g. Founder, Partner, Director, Advisor.
    */
   role?: string | null;
-  status?: ('active' | 'building' | 'advisory' | 'exited') | null;
   /**
-   * One or two lines. Keep it plain.
+   * One or two lines, shown on the card and under the heading.
    */
   description?: string | null;
+  /**
+   * The write-up: what it is, what they do, what you have done for it. Written as an article rather than a formal case study.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Optional images shown below the write-up.
+   */
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Their website. Optional.
+   */
   url?: string | null;
   /**
    * e.g. 2024, or 2021 to 2023.
    */
   year?: string | null;
   /**
+   * Optional pill on the card. Leave blank to show nothing.
+   */
+  status?: ('active' | 'building' | 'exited') | null;
+  /**
    * Lower numbers appear first.
    */
   order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Messages sent through the contact form.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: number;
+  name: string;
+  email: string;
+  subject?: string | null;
+  message: string;
+  handled?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -249,8 +307,12 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'ventures';
-        value: number | Venture;
+        relationTo: 'work-items';
+        value: number | WorkItem;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: number | ContactSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -336,17 +398,40 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ventures_select".
+ * via the `definition` "work-items_select".
  */
-export interface VenturesSelect<T extends boolean = true> {
+export interface WorkItemsSelect<T extends boolean = true> {
   name?: T;
-  logo?: T;
+  slug?: T;
+  coverImage?: T;
+  type?: T;
   role?: T;
-  status?: T;
   description?: T;
+  body?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
   url?: T;
   year?: T;
+  status?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  subject?: T;
+  message?: T;
+  handled?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -442,6 +527,14 @@ export interface SiteSetting {
    */
   metaDescription?: string | null;
   /**
+   * Comma separated. Appended to each page’s own keywords.
+   */
+  keywords?: string | null;
+  /**
+   * Used in the Person structured data that search engines read.
+   */
+  jobTitle?: string | null;
+  /**
    * Used on any page that has not set its own (recommended 1200×630).
    */
   ogImage?: (number | null) | Media;
@@ -499,9 +592,13 @@ export interface Home {
    */
   metaTitle?: string | null;
   /**
-   * Short summary for search engines and link previews.
+   * Short summary for search engines and link previews. Aim for 150-160 characters.
    */
   metaDescription?: string | null;
+  /**
+   * Comma separated. Falls back to the site-wide list. Note that Google ignores the keywords meta tag; this mainly helps other crawlers and keeps the intended terms on record.
+   */
+  keywords?: string | null;
   /**
    * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
    */
@@ -563,9 +660,13 @@ export interface About {
    */
   metaTitle?: string | null;
   /**
-   * Short summary for search engines and link previews.
+   * Short summary for search engines and link previews. Aim for 150-160 characters.
    */
   metaDescription?: string | null;
+  /**
+   * Comma separated. Falls back to the site-wide list. Note that Google ignores the keywords meta tag; this mainly helps other crawlers and keeps the intended terms on record.
+   */
+  keywords?: string | null;
   /**
    * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
    */
@@ -601,25 +702,6 @@ export interface Work {
   studioUrl?: string | null;
   studioLinkLabel?: string | null;
   /**
-   * Each project is an image panel. Link out rather than duplicating case studies.
-   */
-  projects?:
-    | {
-        /**
-         * Shown at the top of the panel. Landscape works best (16:9).
-         */
-        coverImage?: (number | null) | Media;
-        title: string;
-        /**
-         * e.g. Brand and product, 2025.
-         */
-        meta?: string | null;
-        description?: string | null;
-        url?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
    * Sits below the work, so the proof comes first. Keep it understated until advisory work is a bigger part of the picture.
    */
   advisory?: {
@@ -641,34 +723,13 @@ export interface Work {
    */
   metaTitle?: string | null;
   /**
-   * Short summary for search engines and link previews.
+   * Short summary for search engines and link previews. Aim for 150-160 characters.
    */
   metaDescription?: string | null;
   /**
-   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
+   * Comma separated. Falls back to the site-wide list. Note that Google ignores the keywords meta tag; this mainly helps other crawlers and keeps the intended terms on record.
    */
-  ogImage?: (number | null) | Media;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * Heading and intro for /ventures. Add the ventures themselves under Ventures.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ventures-page".
- */
-export interface VenturesPage {
-  id: number;
-  heading: string;
-  intro?: string | null;
-  /**
-   * Browser tab title and search/social title for this page.
-   */
-  metaTitle?: string | null;
-  /**
-   * Short summary for search engines and link previews.
-   */
-  metaDescription?: string | null;
+  keywords?: string | null;
   /**
    * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
    */
@@ -698,9 +759,13 @@ export interface Writing {
    */
   metaTitle?: string | null;
   /**
-   * Short summary for search engines and link previews.
+   * Short summary for search engines and link previews. Aim for 150-160 characters.
    */
   metaDescription?: string | null;
+  /**
+   * Comma separated. Falls back to the site-wide list. Note that Google ignores the keywords meta tag; this mainly helps other crawlers and keeps the intended terms on record.
+   */
+  keywords?: string | null;
   /**
    * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
    */
@@ -722,6 +787,11 @@ export interface Contact {
    */
   intro?: string | null;
   /**
+   * Messages are stored in the CMS under Messages.
+   */
+  showForm?: boolean | null;
+  formHeading?: string | null;
+  /**
    * Rendered as a mailto: link. Just the address, no "mailto:" prefix.
    */
   email?: string | null;
@@ -738,9 +808,13 @@ export interface Contact {
    */
   metaTitle?: string | null;
   /**
-   * Short summary for search engines and link previews.
+   * Short summary for search engines and link previews. Aim for 150-160 characters.
    */
   metaDescription?: string | null;
+  /**
+   * Comma separated. Falls back to the site-wide list. Note that Google ignores the keywords meta tag; this mainly helps other crawlers and keeps the intended terms on record.
+   */
+  keywords?: string | null;
   /**
    * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
    */
@@ -765,6 +839,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   footerText?: T;
   metaTitleSuffix?: T;
   metaDescription?: T;
+  keywords?: T;
+  jobTitle?: T;
   ogImage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -794,6 +870,7 @@ export interface HomeSelect<T extends boolean = true> {
       };
   metaTitle?: T;
   metaDescription?: T;
+  keywords?: T;
   ogImage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -824,6 +901,7 @@ export interface AboutSelect<T extends boolean = true> {
       };
   metaTitle?: T;
   metaDescription?: T;
+  keywords?: T;
   ogImage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -839,16 +917,6 @@ export interface WorkSelect<T extends boolean = true> {
   body?: T;
   studioUrl?: T;
   studioLinkLabel?: T;
-  projects?:
-    | T
-    | {
-        coverImage?: T;
-        title?: T;
-        meta?: T;
-        description?: T;
-        url?: T;
-        id?: T;
-      };
   advisory?:
     | T
     | {
@@ -867,20 +935,7 @@ export interface WorkSelect<T extends boolean = true> {
       };
   metaTitle?: T;
   metaDescription?: T;
-  ogImage?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ventures-page_select".
- */
-export interface VenturesPageSelect<T extends boolean = true> {
-  heading?: T;
-  intro?: T;
-  metaTitle?: T;
-  metaDescription?: T;
+  keywords?: T;
   ogImage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -899,6 +954,7 @@ export interface WritingSelect<T extends boolean = true> {
   postLimit?: T;
   metaTitle?: T;
   metaDescription?: T;
+  keywords?: T;
   ogImage?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -911,11 +967,14 @@ export interface WritingSelect<T extends boolean = true> {
 export interface ContactSelect<T extends boolean = true> {
   heading?: T;
   intro?: T;
+  showForm?: T;
+  formHeading?: T;
   email?: T;
   availability?: T;
   showSocials?: T;
   metaTitle?: T;
   metaDescription?: T;
+  keywords?: T;
   ogImage?: T;
   updatedAt?: T;
   createdAt?: T;

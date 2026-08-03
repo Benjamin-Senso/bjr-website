@@ -1,31 +1,45 @@
 import type { MetadataRoute } from 'next'
-import { getVenturesCount } from './lib/content'
+import { getWorkItems } from './lib/content'
+import { siteUrl } from './lib/metadata'
 import { isBeehiivConfigured } from '@/lib/beehiiv'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Mirrors the nav: routes with nothing behind them yet are left out rather
- * than submitted to search engines as empty pages.
+ * than submitted to search engines as empty pages. Every work item gets its
+ * own entry.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = (process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000').replace(/\/$/, '')
+  const base = siteUrl()
   const lastModified = new Date()
 
-  const paths: { path: string; priority: number }[] = [
-    { path: '', priority: 1 },
-    { path: '/work', priority: 0.9 },
-    { path: '/about', priority: 0.8 },
-    { path: '/contact', priority: 0.7 },
+  const entries: MetadataRoute.Sitemap = [
+    { url: base, lastModified, changeFrequency: 'monthly', priority: 1 },
+    { url: `${base}/work`, lastModified, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/about`, lastModified, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${base}/contact`, lastModified, changeFrequency: 'yearly', priority: 0.7 },
   ]
 
-  if ((await getVenturesCount()) > 0) paths.push({ path: '/ventures', priority: 0.6 })
-  if (isBeehiivConfigured()) paths.push({ path: '/writing', priority: 0.6 })
+  const items = await getWorkItems()
+  for (const item of items) {
+    if (!item.slug) continue
+    entries.push({
+      url: `${base}/work/${item.slug}`,
+      lastModified: item.updatedAt ? new Date(item.updatedAt) : lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    })
+  }
 
-  return paths.map(({ path, priority }) => ({
-    url: `${base}${path}`,
-    lastModified,
-    changeFrequency: 'monthly',
-    priority,
-  }))
+  if (isBeehiivConfigured()) {
+    entries.push({
+      url: `${base}/writing`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    })
+  }
+
+  return entries
 }

@@ -20,6 +20,6 @@ export const revalidateGlobal = (slug: string) => async () => {
   await revalidate(`global:${slug}`)
 }
 
-export const revalidateVentures = async () => {
-  await revalidate('collection:ventures')
+export const revalidateWorkItems = async () => {
+  await revalidate('collection:work-items')
 }

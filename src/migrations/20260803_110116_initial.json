@@ -306,8 +306,102 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "ventures": {
-      "name": "ventures",
+    "work_items_gallery": {
+      "name": "work_items_gallery",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "image_id": {
+          "name": "image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "caption": {
+          "name": "caption",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "work_items_gallery_order_idx": {
+          "name": "work_items_gallery_order_idx",
+          "columns": [
+            "_order"
+          ],
+          "isUnique": false
+        },
+        "work_items_gallery_parent_id_idx": {
+          "name": "work_items_gallery_parent_id_idx",
+          "columns": [
+            "_parent_id"
+          ],
+          "isUnique": false
+        },
+        "work_items_gallery_image_idx": {
+          "name": "work_items_gallery_image_idx",
+          "columns": [
+            "image_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "work_items_gallery_image_id_media_id_fk": {
+          "name": "work_items_gallery_image_id_media_id_fk",
+          "tableFrom": "work_items_gallery",
+          "tableTo": "media",
+          "columnsFrom": [
+            "image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "work_items_gallery_parent_id_fk": {
+          "name": "work_items_gallery_parent_id_fk",
+          "tableFrom": "work_items_gallery",
+          "tableTo": "work_items",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "work_items": {
+      "name": "work_items",
       "columns": {
         "id": {
           "name": "id",
@@ -323,12 +417,27 @@
           "notNull": true,
           "autoincrement": false
         },
-        "logo_id": {
-          "name": "logo_id",
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cover_image_id": {
+          "name": "cover_image_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'venture'"
         },
         "role": {
           "name": "role",
@@ -337,16 +446,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "status": {
-          "name": "status",
+        "description": {
+          "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "'active'"
+          "autoincrement": false
         },
-        "description": {
-          "name": "description",
+        "body": {
+          "name": "body",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -361,6 +469,13 @@
         },
         "year": {
           "name": "year",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -392,22 +507,29 @@
         }
       },
       "indexes": {
-        "ventures_logo_idx": {
-          "name": "ventures_logo_idx",
+        "work_items_slug_idx": {
+          "name": "work_items_slug_idx",
           "columns": [
-            "logo_id"
+            "slug"
+          ],
+          "isUnique": true
+        },
+        "work_items_cover_image_idx": {
+          "name": "work_items_cover_image_idx",
+          "columns": [
+            "cover_image_id"
           ],
           "isUnique": false
         },
-        "ventures_updated_at_idx": {
-          "name": "ventures_updated_at_idx",
+        "work_items_updated_at_idx": {
+          "name": "work_items_updated_at_idx",
           "columns": [
             "updated_at"
           ],
           "isUnique": false
         },
-        "ventures_created_at_idx": {
-          "name": "ventures_created_at_idx",
+        "work_items_created_at_idx": {
+          "name": "work_items_created_at_idx",
           "columns": [
             "created_at"
           ],
@@ -415,12 +537,12 @@
         }
       },
       "foreignKeys": {
-        "ventures_logo_id_media_id_fk": {
-          "name": "ventures_logo_id_media_id_fk",
-          "tableFrom": "ventures",
+        "work_items_cover_image_id_media_id_fk": {
+          "name": "work_items_cover_image_id_media_id_fk",
+          "tableFrom": "work_items",
           "tableTo": "media",
           "columnsFrom": [
-            "logo_id"
+            "cover_image_id"
           ],
           "columnsTo": [
             "id"
@@ -429,6 +551,90 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "contact_submissions": {
+      "name": "contact_submissions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subject": {
+          "name": "subject",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "handled": {
+          "name": "handled",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))"
+        }
+      },
+      "indexes": {
+        "contact_submissions_updated_at_idx": {
+          "name": "contact_submissions_updated_at_idx",
+          "columns": [
+            "updated_at"
+          ],
+          "isUnique": false
+        },
+        "contact_submissions_created_at_idx": {
+          "name": "contact_submissions_created_at_idx",
+          "columns": [
+            "created_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -579,8 +785,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "ventures_id": {
-          "name": "ventures_id",
+        "work_items_id": {
+          "name": "work_items_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "contact_submissions_id": {
+          "name": "contact_submissions_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -623,10 +836,17 @@
           ],
           "isUnique": false
         },
-        "payload_locked_documents_rels_ventures_id_idx": {
-          "name": "payload_locked_documents_rels_ventures_id_idx",
+        "payload_locked_documents_rels_work_items_id_idx": {
+          "name": "payload_locked_documents_rels_work_items_id_idx",
           "columns": [
-            "ventures_id"
+            "work_items_id"
+          ],
+          "isUnique": false
+        },
+        "payload_locked_documents_rels_contact_submissions_id_idx": {
+          "name": "payload_locked_documents_rels_contact_submissions_id_idx",
+          "columns": [
+            "contact_submissions_id"
           ],
           "isUnique": false
         }
@@ -671,12 +891,25 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "payload_locked_documents_rels_ventures_fk": {
-          "name": "payload_locked_documents_rels_ventures_fk",
+        "payload_locked_documents_rels_work_items_fk": {
+          "name": "payload_locked_documents_rels_work_items_fk",
           "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "ventures",
+          "tableTo": "work_items",
           "columnsFrom": [
-            "ventures_id"
+            "work_items_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payload_locked_documents_rels_contact_submissions_fk": {
+          "name": "payload_locked_documents_rels_contact_submissions_fk",
+          "tableFrom": "payload_locked_documents_rels",
+          "tableTo": "contact_submissions",
+          "columnsFrom": [
+            "contact_submissions_id"
           ],
           "columnsTo": [
             "id"
@@ -1042,7 +1275,24 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "'Benjamin Rutter builds brands and the businesses behind them. Founder of Senso Studio, a brand, product and venture studio working with internet-first companies across the UK, EU and MENA.'"
+        },
+        "keywords": {
+          "name": "keywords",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'Benjamin Rutter, Senso Studio, brand studio, product studio, venture studio, brand strategy, brand identity, advisory, consultancy, founder, UK, UAE, MENA'"
+        },
+        "job_title": {
+          "name": "job_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'Founder, Senso Studio'"
         },
         "og_image_id": {
           "name": "og_image_id",
@@ -1330,6 +1580,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "keywords": {
+          "name": "keywords",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "og_image_id": {
           "name": "og_image_id",
           "type": "integer",
@@ -1583,6 +1840,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "keywords": {
+          "name": "keywords",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "og_image_id": {
           "name": "og_image_id",
           "type": "integer",
@@ -1646,121 +1910,6 @@
             "id"
           ],
           "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "work_projects": {
-      "name": "work_projects",
-      "columns": {
-        "_order": {
-          "name": "_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "cover_image_id": {
-          "name": "cover_image_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "meta": {
-          "name": "meta",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "url": {
-          "name": "url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "work_projects_order_idx": {
-          "name": "work_projects_order_idx",
-          "columns": [
-            "_order"
-          ],
-          "isUnique": false
-        },
-        "work_projects_parent_id_idx": {
-          "name": "work_projects_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
-          "isUnique": false
-        },
-        "work_projects_cover_image_idx": {
-          "name": "work_projects_cover_image_idx",
-          "columns": [
-            "cover_image_id"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "work_projects_cover_image_id_media_id_fk": {
-          "name": "work_projects_cover_image_id_media_id_fk",
-          "tableFrom": "work_projects",
-          "tableTo": "media",
-          "columnsFrom": [
-            "cover_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "work_projects_parent_id_fk": {
-          "name": "work_projects_parent_id_fk",
-          "tableFrom": "work_projects",
-          "tableTo": "work",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -1866,7 +2015,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "'Senso Studio. Strategy, brand, product and systems for growth-stage companies.'"
+          "default": "'The studio, the ventures around it, and advisory work with founders and operators.'"
         },
         "body": {
           "name": "body",
@@ -1946,6 +2095,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "keywords": {
+          "name": "keywords",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "og_image_id": {
           "name": "og_image_id",
           "type": "integer",
@@ -1981,97 +2137,6 @@
         "work_og_image_id_media_id_fk": {
           "name": "work_og_image_id_media_id_fk",
           "tableFrom": "work",
-          "tableTo": "media",
-          "columnsFrom": [
-            "og_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "ventures_page": {
-      "name": "ventures_page",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "heading": {
-          "name": "heading",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'Ventures'"
-        },
-        "intro": {
-          "name": "intro",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "'Things I have built or backed, through Senso and its Ember partnerships.'"
-        },
-        "meta_title": {
-          "name": "meta_title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "'Ventures'"
-        },
-        "meta_description": {
-          "name": "meta_description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "og_image_id": {
-          "name": "og_image_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "ventures_page_og_image_idx": {
-          "name": "ventures_page_og_image_idx",
-          "columns": [
-            "og_image_id"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "ventures_page_og_image_id_media_id_fk": {
-          "name": "ventures_page_og_image_id_media_id_fk",
-          "tableFrom": "ventures_page",
           "tableTo": "media",
           "columnsFrom": [
             "og_image_id"
@@ -2160,6 +2225,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "keywords": {
+          "name": "keywords",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "og_image_id": {
           "name": "og_image_id",
           "type": "integer",
@@ -2236,6 +2308,22 @@
           "autoincrement": false,
           "default": "'Studio work, advisory and consulting, or a venture you want a partner on. If you are building something and want brand and product that pulls commercial weight, get in touch.'"
         },
+        "show_form": {
+          "name": "show_form",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": true
+        },
+        "form_heading": {
+          "name": "form_heading",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'Send a message'"
+        },
         "email": {
           "name": "email",
           "type": "text",
@@ -2268,6 +2356,13 @@
         },
         "meta_description": {
           "name": "meta_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "keywords": {
+          "name": "keywords",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -2333,6 +2428,6 @@
   "internal": {
     "indexes": {}
   },
-  "id": "04a19ccb-72e6-4720-aeaf-754835221a3c",
+  "id": "f8c8c161-4985-4b26-8259-60ea52e19181",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
