@@ -38,6 +38,9 @@ services:
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
+      # Google Tag Manager container ID. Optional; without it no analytics
+      # and no consent banner load.
+      GTM_ID: ${GTM_ID:-}
       # Postgres connection string. Dokploy supplies this when a database is
       # attached to the app; set it explicitly in the Environment tab otherwise.
       DATABASE_URI: ${DATABASE_URI:?set DATABASE_URI in Dokploy}

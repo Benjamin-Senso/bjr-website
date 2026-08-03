@@ -123,6 +123,21 @@ deploy.
 **Renaming or moving a field triggers an interactive "created or renamed?" prompt** during
 `payload migrate:create`, which hangs with no TTY. Answer it in an interactive terminal.
 
+## Analytics and consent
+
+Google Tag Manager loads only when `GTM_ID` is set, so dev and preview environments stay out
+of your analytics by simply not setting it. Configure GA4 as a tag **inside** GTM rather than
+adding a second GA4 tag here, or every pageview is counted twice.
+
+Google Consent Mode v2 initialises with `ad_storage`, `ad_user_data`, `ad_personalization` and
+`analytics_storage` all **denied** (`src/app/(frontend)/components/ConsentDefaults.tsx`), so
+no measurement cookies are set until a visitor accepts. The banner writes the choice to
+`localStorage` and pushes a consent update; the defaults script replays a stored acceptance on
+later page loads, before the container runs.
+
+The consent script is `beforeInteractive` and must stay that way. If it loads after the
+container, tags fire once with no consent signal and set cookies regardless.
+
 ## Database migrations
 
 - **Dev** uses schema push, so local changes sync automatically.
