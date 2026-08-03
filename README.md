@@ -107,9 +107,21 @@ Write `defaultValue: () => lexicalParagraphs([...])`.
 production it can hang the container on an interactive "created or renamed?" prompt with no
 TTY. Production applies committed migrations instead.
 
-**Renaming or moving a field triggers that same interactive prompt** during
-`payload migrate:create`. Pre-launch, the fastest fix is to delete `src/migrations/*`, drop
-and recreate the local database, then regenerate a single clean initial migration.
+**Never regenerate an existing migration once it has run in production.** Payload tracks
+migrations by filename in the `payload_migrations` table. Regenerating produces a new
+timestamped name, so production treats it as unrun, tries to apply it, and dies on
+`type "..." already exists` — taking the whole container down, because migrations run before
+the server starts. Always add a new migration instead:
+
+```bash
+pnpm payload migrate:create <what_changed>
+```
+
+Deleting and regenerating `src/migrations/*` is only safe *before* the first production
+deploy.
+
+**Renaming or moving a field triggers an interactive "created or renamed?" prompt** during
+`payload migrate:create`, which hangs with no TTY. Answer it in an interactive terminal.
 
 ## Database migrations
 
