@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobal } from '../hooks/revalidate'
 import { seoTab } from './fields/seo'
 import { lexicalParagraphs } from './fields/lexical'
 
@@ -11,6 +12,9 @@ export const Work: GlobalConfig = {
   label: 'Work Page',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('work')],
   },
   admin: {
     description: 'The /work page. Senso and selected proof, linking out to the studio site.',
@@ -67,16 +71,30 @@ export const Work: GlobalConfig = {
               ],
             },
             {
-              name: 'proof',
+              name: 'projects',
               type: 'array',
-              label: 'Selected Proof',
-              labels: { singular: 'Item', plural: 'Items' },
+              label: 'Projects',
+              labels: { singular: 'Project', plural: 'Projects' },
               admin: {
                 description:
-                  'Selected work or outcomes. Keep it short and link out rather than duplicating case studies.',
+                  'Each project is an image panel. Link out rather than duplicating case studies.',
                 initCollapsed: true,
               },
+              defaultValue: [
+                { title: 'Signet' },
+                { title: 'Senso', url: 'https://sensostudio.co' },
+                { title: 'Mandem Meetup' },
+              ],
               fields: [
+                {
+                  name: 'coverImage',
+                  type: 'upload',
+                  relationTo: 'media',
+                  label: 'Cover Image',
+                  admin: {
+                    description: 'Shown at the top of the panel. Landscape works best (16:9).',
+                  },
+                },
                 {
                   type: 'row',
                   fields: [

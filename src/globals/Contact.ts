@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobal } from '../hooks/revalidate'
 import { seoTab } from './fields/seo'
 
 export const Contact: GlobalConfig = {
@@ -6,6 +7,9 @@ export const Contact: GlobalConfig = {
   label: 'Contact Page',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('contact')],
   },
   admin: {
     description: 'The /contact page.',

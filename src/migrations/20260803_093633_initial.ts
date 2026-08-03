@@ -231,19 +231,22 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
   await db.run(sql`CREATE INDEX \`about_portrait_idx\` ON \`about\` (\`portrait_id\`);`)
   await db.run(sql`CREATE INDEX \`about_og_image_idx\` ON \`about\` (\`og_image_id\`);`)
-  await db.run(sql`CREATE TABLE \`work_proof\` (
+  await db.run(sql`CREATE TABLE \`work_projects\` (
   	\`_order\` integer NOT NULL,
   	\`_parent_id\` integer NOT NULL,
   	\`id\` text PRIMARY KEY NOT NULL,
+  	\`cover_image_id\` integer,
   	\`title\` text NOT NULL,
   	\`meta\` text,
   	\`description\` text,
   	\`url\` text,
+  	FOREIGN KEY (\`cover_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null,
   	FOREIGN KEY (\`_parent_id\`) REFERENCES \`work\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
-  await db.run(sql`CREATE INDEX \`work_proof_order_idx\` ON \`work_proof\` (\`_order\`);`)
-  await db.run(sql`CREATE INDEX \`work_proof_parent_id_idx\` ON \`work_proof\` (\`_parent_id\`);`)
+  await db.run(sql`CREATE INDEX \`work_projects_order_idx\` ON \`work_projects\` (\`_order\`);`)
+  await db.run(sql`CREATE INDEX \`work_projects_parent_id_idx\` ON \`work_projects\` (\`_parent_id\`);`)
+  await db.run(sql`CREATE INDEX \`work_projects_cover_image_idx\` ON \`work_projects\` (\`cover_image_id\`);`)
   await db.run(sql`CREATE TABLE \`work\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`heading\` text DEFAULT 'Work' NOT NULL,
@@ -326,7 +329,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.run(sql`DROP TABLE \`about_help_with\`;`)
   await db.run(sql`DROP TABLE \`about_facts\`;`)
   await db.run(sql`DROP TABLE \`about\`;`)
-  await db.run(sql`DROP TABLE \`work_proof\`;`)
+  await db.run(sql`DROP TABLE \`work_projects\`;`)
   await db.run(sql`DROP TABLE \`work\`;`)
   await db.run(sql`DROP TABLE \`ventures_page\`;`)
   await db.run(sql`DROP TABLE \`writing\`;`)

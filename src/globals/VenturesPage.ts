@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobal } from '../hooks/revalidate'
 import { seoTab } from './fields/seo'
 
 /** Page copy for /ventures. The ventures themselves live in the collection. */
@@ -7,6 +8,9 @@ export const VenturesPage: GlobalConfig = {
   label: 'Ventures Page',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('ventures-page')],
   },
   admin: {
     description: 'Heading and intro for /ventures. Add the ventures themselves under Ventures.',

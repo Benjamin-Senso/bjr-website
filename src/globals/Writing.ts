@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobal } from '../hooks/revalidate'
 import { seoTab } from './fields/seo'
 
 /**
@@ -11,6 +12,9 @@ export const Writing: GlobalConfig = {
   label: 'Writing Page',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('writing')],
   },
   admin: {
     description: 'The /writing page. Posts are pulled automatically from beehiiv.',

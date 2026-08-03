@@ -1,12 +1,11 @@
 import { Inter, Instrument_Serif } from 'next/font/google'
-import { getPayload } from 'payload'
-import config from '@payload-config'
 import React from 'react'
 import './styles.css'
 import { AuroraBackdrop } from './components/AuroraBackdrop'
 import { GlassFilter } from './components/GlassFilter'
 import { Nav, type NavRoute } from './components/Nav'
 import { Footer } from './components/Footer'
+import { getGlobal, getVenturesCount } from './lib/content'
 import { isBeehiivConfigured } from '@/lib/beehiiv'
 
 const inter = Inter({
@@ -24,20 +23,19 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const payload = await getPayload({ config })
-
-  const [settings, ventures] = await Promise.all([
-    payload.findGlobal({ slug: 'site-settings' }),
-    payload.count({ collection: 'ventures' }),
+  const [settings, venturesCount] = await Promise.all([
+    getGlobal('site-settings'),
+    getVenturesCount(),
   ])
 
-  // One good page beats five thin ones: routes that have nothing to show yet
-  // stay out of the nav and appear on their own once there is content.
+  // Work before About: the studio is the proof, the story comes second.
+  // Routes with nothing behind them yet stay out rather than leading somewhere
+  // empty, and appear on their own once there is content.
   const routes: NavRoute[] = [
     { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
     { href: '/work', label: 'Work' },
-    ...(ventures.totalDocs > 0 ? [{ href: '/ventures', label: 'Ventures' }] : []),
+    { href: '/about', label: 'About' },
+    ...(venturesCount > 0 ? [{ href: '/ventures', label: 'Ventures' }] : []),
     ...(isBeehiivConfigured() ? [{ href: '/writing', label: 'Writing' }] : []),
   ]
 

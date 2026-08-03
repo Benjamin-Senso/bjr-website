@@ -1,32 +1,27 @@
-import { getPayload } from 'payload'
-import config from '@payload-config'
 import './styles.css'
 import { Hero } from './components/Hero'
 import { Socials } from './components/Socials'
-import { LinkCard } from './components/LinkCard'
+import { SectionPanel } from './components/SectionPanel'
 import { PageShell } from './components/PageShell'
+import { getGlobal } from './lib/content'
 import { buildMetadata } from './lib/metadata'
 
-// Content is editable in the CMS, so always render fresh on request.
+// Rendered per request so the build never needs a database; the reads
+// themselves are cached and dropped by Payload's afterChange hooks.
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
-  const payload = await getPayload({ config })
-  const home = await payload.findGlobal({ slug: 'home' })
+  const home = await getGlobal('home')
   return buildMetadata(home, 'Benjamin Rutter')
 }
 
 export default async function HomePage() {
-  const payload = await getPayload({ config })
-  const [home, settings] = await Promise.all([
-    payload.findGlobal({ slug: 'home' }),
-    payload.findGlobal({ slug: 'site-settings' }),
-  ])
+  const [home, settings] = await Promise.all([getGlobal('home'), getGlobal('site-settings')])
 
   const links = home.links ?? []
 
   return (
-    <PageShell width="narrow">
+    <PageShell width="home">
       <Hero name={settings.name} bio={home.bio} profileImage={settings.profileImage} />
 
       {home.statement ? (
@@ -38,9 +33,9 @@ export default async function HomePage() {
       <Socials socials={settings.socials} />
 
       {links.length ? (
-        <section className="mt-10 flex w-full flex-col gap-3">
+        <section className="mt-10 grid w-full grid-cols-1 gap-4">
           {links.map((link) => (
-            <LinkCard key={link.id ?? link.url} link={link} />
+            <SectionPanel key={link.id ?? link.url} link={link} />
           ))}
         </section>
       ) : null}

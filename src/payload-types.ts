@@ -589,10 +589,14 @@ export interface Work {
   studioUrl?: string | null;
   studioLinkLabel?: string | null;
   /**
-   * Selected work or outcomes. Keep it short and link out rather than duplicating case studies.
+   * Each project is an image panel. Link out rather than duplicating case studies.
    */
-  proof?:
+  projects?:
     | {
+        /**
+         * Shown at the top of the panel. Landscape works best (16:9).
+         */
+        coverImage?: (number | null) | Media;
         title: string;
         /**
          * e.g. Brand and product, 2025.
@@ -800,9 +804,10 @@ export interface WorkSelect<T extends boolean = true> {
   body?: T;
   studioUrl?: T;
   studioLinkLabel?: T;
-  proof?:
+  projects?:
     | T
     | {
+        coverImage?: T;
         title?: T;
         meta?: T;
         description?: T;

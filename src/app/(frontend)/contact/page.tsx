@@ -1,24 +1,18 @@
-import { getPayload } from 'payload'
-import config from '@payload-config'
 import { PageShell } from '../components/PageShell'
 import { PageHeader } from '../components/PageHeader'
 import { Socials } from '../components/Socials'
+import { getGlobal } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
-  const payload = await getPayload({ config })
-  const contact = await payload.findGlobal({ slug: 'contact' })
+  const contact = await getGlobal('contact')
   return buildMetadata(contact, 'Contact')
 }
 
 export default async function ContactPage() {
-  const payload = await getPayload({ config })
-  const [contact, settings] = await Promise.all([
-    payload.findGlobal({ slug: 'contact' }),
-    payload.findGlobal({ slug: 'site-settings' }),
-  ])
+  const [contact, settings] = await Promise.all([getGlobal('contact'), getGlobal('site-settings')])
 
   return (
     <PageShell>

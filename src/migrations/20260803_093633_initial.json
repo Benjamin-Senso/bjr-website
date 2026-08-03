@@ -1586,8 +1586,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "work_proof": {
-      "name": "work_proof",
+    "work_projects": {
+      "name": "work_projects",
       "columns": {
         "_order": {
           "name": "_order",
@@ -1608,6 +1608,13 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
+          "autoincrement": false
+        },
+        "cover_image_id": {
+          "name": "cover_image_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "title": {
@@ -1640,25 +1647,45 @@
         }
       },
       "indexes": {
-        "work_proof_order_idx": {
-          "name": "work_proof_order_idx",
+        "work_projects_order_idx": {
+          "name": "work_projects_order_idx",
           "columns": [
             "_order"
           ],
           "isUnique": false
         },
-        "work_proof_parent_id_idx": {
-          "name": "work_proof_parent_id_idx",
+        "work_projects_parent_id_idx": {
+          "name": "work_projects_parent_id_idx",
           "columns": [
             "_parent_id"
+          ],
+          "isUnique": false
+        },
+        "work_projects_cover_image_idx": {
+          "name": "work_projects_cover_image_idx",
+          "columns": [
+            "cover_image_id"
           ],
           "isUnique": false
         }
       },
       "foreignKeys": {
-        "work_proof_parent_id_fk": {
-          "name": "work_proof_parent_id_fk",
-          "tableFrom": "work_proof",
+        "work_projects_cover_image_id_media_id_fk": {
+          "name": "work_projects_cover_image_id_media_id_fk",
+          "tableFrom": "work_projects",
+          "tableTo": "media",
+          "columnsFrom": [
+            "cover_image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "work_projects_parent_id_fk": {
+          "name": "work_projects_parent_id_fk",
+          "tableFrom": "work_projects",
           "tableTo": "work",
           "columnsFrom": [
             "_parent_id"
@@ -2125,6 +2152,6 @@
   "internal": {
     "indexes": {}
   },
-  "id": "4e3c5a7b-2383-456d-974e-f3ad094b4472",
+  "id": "ad1cfdc5-d648-4322-aece-34ae71bbfb01",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

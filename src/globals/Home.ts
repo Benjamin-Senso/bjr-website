@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobal } from '../hooks/revalidate'
 import { seoTab } from './fields/seo'
 
 /**
@@ -11,6 +12,9 @@ export const Home: GlobalConfig = {
   label: 'Home Page',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('home')],
   },
   admin: {
     description: 'The landing page. Name, avatar and socials live in Site Settings.',
@@ -53,19 +57,24 @@ export const Home: GlobalConfig = {
               },
               defaultValue: [
                 {
+                  title: 'Work',
+                  description: 'The studio, selected projects and the ventures behind them.',
+                  url: '/work',
+                },
+                {
+                  title: 'About',
+                  description: 'How I got here, and why the two sides sit together.',
+                  url: '/about',
+                },
+                {
+                  title: 'Contact',
+                  description: 'For brand, product or advisory work.',
+                  url: '/contact',
+                },
+                {
                   title: 'Senso Studio',
                   description: 'Brand, product and systems for growth-stage companies.',
                   url: 'https://sensostudio.co',
-                },
-                {
-                  title: 'Ventures',
-                  description: 'Things I have built or backed.',
-                  url: '/ventures',
-                },
-                {
-                  title: 'Get in touch',
-                  description: 'For brand, product or advisory work.',
-                  url: '/contact',
                 },
               ],
               fields: [

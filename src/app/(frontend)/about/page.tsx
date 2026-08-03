@@ -1,24 +1,21 @@
 import Image from 'next/image'
-import { getPayload } from 'payload'
-import config from '@payload-config'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { PageShell } from '../components/PageShell'
 import { PageHeader } from '../components/PageHeader'
 import { Prose } from '../components/Prose'
 import { resolveMedia } from '../lib/media'
+import { getGlobal } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
-  const payload = await getPayload({ config })
-  const about = await payload.findGlobal({ slug: 'about' })
+  const about = await getGlobal('about')
   return buildMetadata(about, 'About')
 }
 
 export default async function AboutPage() {
-  const payload = await getPayload({ config })
-  const about = await payload.findGlobal({ slug: 'about' })
+  const about = await getGlobal('about')
   const portrait = resolveMedia(about.portrait)
 
   return (

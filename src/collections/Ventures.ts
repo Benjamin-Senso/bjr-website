@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { revalidateVentures } from '../hooks/revalidate'
 
 /**
  * Ventures are recurring content added over time, so they earn a collection
@@ -9,6 +10,10 @@ export const Ventures: CollectionConfig = {
   labels: { singular: 'Venture', plural: 'Ventures' },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateVentures],
+    afterDelete: [revalidateVentures],
   },
   admin: {
     useAsTitle: 'name',

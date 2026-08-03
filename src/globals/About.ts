@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobal } from '../hooks/revalidate'
 import { seoTab } from './fields/seo'
 import { lexicalParagraphs } from './fields/lexical'
 
@@ -7,6 +8,9 @@ export const About: GlobalConfig = {
   label: 'About Page',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('about')],
   },
   admin: {
     description: 'The /about page.',

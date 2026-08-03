@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidateGlobal } from '../hooks/revalidate'
 
 /**
  * Everything shared across all routes: identity, socials, footer, and the
@@ -13,6 +14,9 @@ export const SiteSettings: GlobalConfig = {
   label: 'Site Settings',
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('site-settings')],
   },
   admin: {
     description: 'Identity, social links, footer and default SEO — shared by every page.',
