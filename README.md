@@ -135,8 +135,11 @@ terminates TLS and routes to the container over the shared `dokploy-network`, so
      trailing slash
    - `BEEHIIV_API_KEY` and `BEEHIIV_PUBLICATION_ID` — optional; without both, `/writing`
      stays hidden
-   - `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — optional; forwards contact form
-     messages by email. Without them messages are still stored under Messages in the CMS.
+   - `RESEND_API_KEY` and `EMAIL_FROM` — optional; forwards contact form messages by email.
+     Resend is preferred over SMTP on a VPS because it is plain HTTPS, so it is unaffected by
+     hosts that block outbound SMTP ports. `EMAIL_FROM`'s domain must be verified in Resend.
+     `SMTP_*` is used as a fallback when no Resend key is set. Without either, messages are
+     still stored under Messages in the CMS.
    - `R2_*` — optional; see `.env.example`. Set `R2_PUBLIC_URL` before the first deploy, as
      it is read at build time for `next/image`.
 3. In the **Domains** tab add the domain, service `web`, container port `3000`, HTTPS on

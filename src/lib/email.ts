@@ -1,35 +1,62 @@
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { resendAdapter } from '@payloadcms/email-resend'
 
 /**
- * Generic SMTP rather than a single provider's SDK, so this works with Google
- * Workspace, Resend's SMTP bridge, Fastmail or anything else without a code
- * change.
+ * Email transport, in order of preference:
  *
- * Returns undefined when SMTP is not configured, which leaves Payload on its
- * default console transport. Contact submissions are stored in the CMS either
- * way, so a missing mail server loses a notification, never a message.
+ *   1. Resend, if RESEND_API_KEY is set. Preferred on a VPS: it is plain
+ *      HTTPS, so it is unaffected by hosts that block or throttle outbound
+ *      SMTP ports, and it needs no app passwords.
+ *   2. Generic SMTP, if SMTP_HOST/USER/PASS are set. Works with Google
+ *      Workspace, Fastmail, or Resend's own SMTP bridge.
+ *   3. Nothing, leaving Payload on its default console transport.
+ *
+ * Contact submissions are stored in the CMS regardless, so a missing or broken
+ * transport loses a notification, never a message.
  */
-export function isEmailConfigured(): boolean {
+
+const fromAddress = () => process.env.EMAIL_FROM || process.env.SMTP_FROM || ''
+const fromName = () => process.env.EMAIL_FROM_NAME || 'Benjamin Rutter'
+
+export function isResendConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY && fromAddress())
+}
+
+export function isSmtpConfigured(): boolean {
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS)
 }
 
+export function isEmailConfigured(): boolean {
+  return isResendConfigured() || isSmtpConfigured()
+}
+
 export function buildEmailAdapter() {
-  if (!isEmailConfigured()) return undefined
+  if (isResendConfigured()) {
+    return resendAdapter({
+      defaultFromAddress: fromAddress(),
+      defaultFromName: fromName(),
+      apiKey: process.env.RESEND_API_KEY!,
+    })
+  }
 
-  const port = Number(process.env.SMTP_PORT ?? 587)
+  if (isSmtpConfigured()) {
+    const port = Number(process.env.SMTP_PORT ?? 587)
 
-  return nodemailerAdapter({
-    defaultFromAddress: process.env.SMTP_FROM || process.env.SMTP_USER!,
-    defaultFromName: process.env.SMTP_FROM_NAME || 'Benjamin Rutter',
-    transportOptions: {
-      host: process.env.SMTP_HOST,
-      port,
-      // 465 is implicit TLS; everything else upgrades via STARTTLS.
-      secure: port === 465,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+    return nodemailerAdapter({
+      defaultFromAddress: fromAddress() || process.env.SMTP_USER!,
+      defaultFromName: fromName(),
+      transportOptions: {
+        host: process.env.SMTP_HOST,
+        port,
+        // 465 is implicit TLS; everything else upgrades via STARTTLS.
+        secure: port === 465,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
       },
-    },
-  })
+    })
+  }
+
+  return undefined
 }
