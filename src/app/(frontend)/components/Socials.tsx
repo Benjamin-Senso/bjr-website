@@ -1,4 +1,4 @@
-import type { Home } from '@/payload-types'
+import type { SiteSetting } from '@/payload-types'
 import type { IconType } from 'react-icons'
 import {
   FaInstagram,
@@ -39,7 +39,7 @@ const LABELS: Record<string, string> = {
   website: 'Website',
 }
 
-export function Socials({ socials }: { socials: Home['socials'] }) {
+export function Socials({ socials }: { socials: SiteSetting['socials'] }) {
   if (!socials || socials.length === 0) return null
 
   return (

@@ -116,17 +116,33 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
   await db.run(sql`CREATE INDEX \`payload_migrations_updated_at_idx\` ON \`payload_migrations\` (\`updated_at\`);`)
   await db.run(sql`CREATE INDEX \`payload_migrations_created_at_idx\` ON \`payload_migrations\` (\`created_at\`);`)
-  await db.run(sql`CREATE TABLE \`home_socials\` (
+  await db.run(sql`CREATE TABLE \`site_settings_socials\` (
   	\`_order\` integer NOT NULL,
   	\`_parent_id\` integer NOT NULL,
   	\`id\` text PRIMARY KEY NOT NULL,
   	\`platform\` text DEFAULT 'website' NOT NULL,
   	\`url\` text NOT NULL,
-  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`home\`(\`id\`) ON UPDATE no action ON DELETE cascade
+  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`site_settings\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
-  await db.run(sql`CREATE INDEX \`home_socials_order_idx\` ON \`home_socials\` (\`_order\`);`)
-  await db.run(sql`CREATE INDEX \`home_socials_parent_id_idx\` ON \`home_socials\` (\`_parent_id\`);`)
+  await db.run(sql`CREATE INDEX \`site_settings_socials_order_idx\` ON \`site_settings_socials\` (\`_order\`);`)
+  await db.run(sql`CREATE INDEX \`site_settings_socials_parent_id_idx\` ON \`site_settings_socials\` (\`_parent_id\`);`)
+  await db.run(sql`CREATE TABLE \`site_settings\` (
+  	\`id\` integer PRIMARY KEY NOT NULL,
+  	\`profile_image_id\` integer,
+  	\`name\` text DEFAULT 'Benjamin Rutter' NOT NULL,
+  	\`footer_text\` text DEFAULT '© 2026 Benjamin Rutter',
+  	\`meta_title_suffix\` text DEFAULT 'Benjamin Rutter',
+  	\`meta_description\` text,
+  	\`og_image_id\` integer,
+  	\`updated_at\` text,
+  	\`created_at\` text,
+  	FOREIGN KEY (\`profile_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null,
+  	FOREIGN KEY (\`og_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`site_settings_profile_image_idx\` ON \`site_settings\` (\`profile_image_id\`);`)
+  await db.run(sql`CREATE INDEX \`site_settings_og_image_idx\` ON \`site_settings\` (\`og_image_id\`);`)
   await db.run(sql`CREATE TABLE \`home_link_groups_links\` (
   	\`_order\` integer NOT NULL,
   	\`_parent_id\` text NOT NULL,
@@ -154,21 +170,107 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`CREATE INDEX \`home_link_groups_parent_id_idx\` ON \`home_link_groups\` (\`_parent_id\`);`)
   await db.run(sql`CREATE TABLE \`home\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
-  	\`profile_image_id\` integer,
-  	\`name\` text DEFAULT 'Benjamin Rutter' NOT NULL,
   	\`bio\` text DEFAULT 'Founder and builder. I design and ship products, brands, and the systems behind them.' NOT NULL,
-  	\`footer_text\` text DEFAULT '© 2026 Benjamin Rutter',
   	\`meta_title\` text DEFAULT 'Benjamin Rutter',
   	\`meta_description\` text,
   	\`og_image_id\` integer,
   	\`updated_at\` text,
   	\`created_at\` text,
-  	FOREIGN KEY (\`profile_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null,
   	FOREIGN KEY (\`og_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`CREATE INDEX \`home_profile_image_idx\` ON \`home\` (\`profile_image_id\`);`)
   await db.run(sql`CREATE INDEX \`home_og_image_idx\` ON \`home\` (\`og_image_id\`);`)
+  await db.run(sql`CREATE TABLE \`about_facts\` (
+  	\`_order\` integer NOT NULL,
+  	\`_parent_id\` integer NOT NULL,
+  	\`id\` text PRIMARY KEY NOT NULL,
+  	\`label\` text NOT NULL,
+  	\`value\` text NOT NULL,
+  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`about\`(\`id\`) ON UPDATE no action ON DELETE cascade
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`about_facts_order_idx\` ON \`about_facts\` (\`_order\`);`)
+  await db.run(sql`CREATE INDEX \`about_facts_parent_id_idx\` ON \`about_facts\` (\`_parent_id\`);`)
+  await db.run(sql`CREATE TABLE \`about\` (
+  	\`id\` integer PRIMARY KEY NOT NULL,
+  	\`heading\` text DEFAULT 'About' NOT NULL,
+  	\`intro\` text,
+  	\`body\` text,
+  	\`portrait_id\` integer,
+  	\`meta_title\` text DEFAULT 'About',
+  	\`meta_description\` text,
+  	\`og_image_id\` integer,
+  	\`updated_at\` text,
+  	\`created_at\` text,
+  	FOREIGN KEY (\`portrait_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null,
+  	FOREIGN KEY (\`og_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`about_portrait_idx\` ON \`about\` (\`portrait_id\`);`)
+  await db.run(sql`CREATE INDEX \`about_og_image_idx\` ON \`about\` (\`og_image_id\`);`)
+  await db.run(sql`CREATE TABLE \`work_ventures\` (
+  	\`_order\` integer NOT NULL,
+  	\`_parent_id\` integer NOT NULL,
+  	\`id\` text PRIMARY KEY NOT NULL,
+  	\`logo_id\` integer,
+  	\`name\` text NOT NULL,
+  	\`role\` text,
+  	\`description\` text,
+  	\`url\` text,
+  	\`status\` text DEFAULT 'active',
+  	FOREIGN KEY (\`logo_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null,
+  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`work\`(\`id\`) ON UPDATE no action ON DELETE cascade
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`work_ventures_order_idx\` ON \`work_ventures\` (\`_order\`);`)
+  await db.run(sql`CREATE INDEX \`work_ventures_parent_id_idx\` ON \`work_ventures\` (\`_parent_id\`);`)
+  await db.run(sql`CREATE INDEX \`work_ventures_logo_idx\` ON \`work_ventures\` (\`logo_id\`);`)
+  await db.run(sql`CREATE TABLE \`work\` (
+  	\`id\` integer PRIMARY KEY NOT NULL,
+  	\`heading\` text DEFAULT 'Work' NOT NULL,
+  	\`intro\` text,
+  	\`meta_title\` text DEFAULT 'Work',
+  	\`meta_description\` text,
+  	\`og_image_id\` integer,
+  	\`updated_at\` text,
+  	\`created_at\` text,
+  	FOREIGN KEY (\`og_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`work_og_image_idx\` ON \`work\` (\`og_image_id\`);`)
+  await db.run(sql`CREATE TABLE \`writing\` (
+  	\`id\` integer PRIMARY KEY NOT NULL,
+  	\`heading\` text DEFAULT 'Writing' NOT NULL,
+  	\`intro\` text,
+  	\`show_subscribe\` integer DEFAULT true,
+  	\`subscribe_heading\` text DEFAULT 'Subscribe to the newsletter',
+  	\`subscribe_blurb\` text DEFAULT 'Occasional notes on building products, brands and companies.',
+  	\`post_limit\` numeric DEFAULT 10,
+  	\`meta_title\` text DEFAULT 'Writing',
+  	\`meta_description\` text,
+  	\`og_image_id\` integer,
+  	\`updated_at\` text,
+  	\`created_at\` text,
+  	FOREIGN KEY (\`og_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`writing_og_image_idx\` ON \`writing\` (\`og_image_id\`);`)
+  await db.run(sql`CREATE TABLE \`contact\` (
+  	\`id\` integer PRIMARY KEY NOT NULL,
+  	\`heading\` text DEFAULT 'Contact' NOT NULL,
+  	\`intro\` text,
+  	\`email\` text,
+  	\`availability\` text,
+  	\`show_socials\` integer DEFAULT true,
+  	\`meta_title\` text DEFAULT 'Contact',
+  	\`meta_description\` text,
+  	\`og_image_id\` integer,
+  	\`updated_at\` text,
+  	\`created_at\` text,
+  	FOREIGN KEY (\`og_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`contact_og_image_idx\` ON \`contact\` (\`og_image_id\`);`)
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
@@ -181,8 +283,15 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.run(sql`DROP TABLE \`payload_preferences\`;`)
   await db.run(sql`DROP TABLE \`payload_preferences_rels\`;`)
   await db.run(sql`DROP TABLE \`payload_migrations\`;`)
-  await db.run(sql`DROP TABLE \`home_socials\`;`)
+  await db.run(sql`DROP TABLE \`site_settings_socials\`;`)
+  await db.run(sql`DROP TABLE \`site_settings\`;`)
   await db.run(sql`DROP TABLE \`home_link_groups_links\`;`)
   await db.run(sql`DROP TABLE \`home_link_groups\`;`)
   await db.run(sql`DROP TABLE \`home\`;`)
+  await db.run(sql`DROP TABLE \`about_facts\`;`)
+  await db.run(sql`DROP TABLE \`about\`;`)
+  await db.run(sql`DROP TABLE \`work_ventures\`;`)
+  await db.run(sql`DROP TABLE \`work\`;`)
+  await db.run(sql`DROP TABLE \`writing\`;`)
+  await db.run(sql`DROP TABLE \`contact\`;`)
 }

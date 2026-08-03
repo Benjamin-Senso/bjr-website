@@ -1,4 +1,3 @@
-import type { Metadata } from 'next'
 import { Inter, Instrument_Serif } from 'next/font/google'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -6,6 +5,8 @@ import React from 'react'
 import './styles.css'
 import { AuroraBackdrop } from './components/AuroraBackdrop'
 import { GlassFilter } from './components/GlassFilter'
+import { Nav } from './components/Nav'
+import { Footer } from './components/Footer'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -21,44 +22,18 @@ const instrumentSerif = Instrument_Serif({
   display: 'swap',
 })
 
-export async function generateMetadata(): Promise<Metadata> {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const payload = await getPayload({ config })
-  const home = await payload.findGlobal({ slug: 'home' })
+  const settings = await payload.findGlobal({ slug: 'site-settings' })
 
-  const title = home?.metaTitle || home?.name || 'Benjamin Rutter'
-  const description = home?.metaDescription || home?.bio || undefined
-  const ogImage =
-    home?.ogImage && typeof home.ogImage === 'object' ? home.ogImage.url : undefined
-
-  const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL
-
-  return {
-    // Makes the OG/Twitter image URLs absolute, which social scrapers require.
-    metadataBase: siteUrl ? new URL(siteUrl) : undefined,
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-      images: ogImage ? [{ url: ogImage }] : undefined,
-    },
-    twitter: {
-      card: ogImage ? 'summary_large_image' : 'summary',
-      title,
-      description,
-      images: ogImage ? [ogImage] : undefined,
-    },
-  }
-}
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
       <body>
         <GlassFilter />
         <AuroraBackdrop />
+        <Nav />
         {children}
+        <Footer text={settings?.footerText} />
       </body>
     </html>
   )

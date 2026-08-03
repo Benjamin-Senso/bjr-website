@@ -1,5 +1,11 @@
 import type { GlobalConfig } from 'payload'
+import { seoTab } from './fields/seo'
 
+/**
+ * The landing route. Identity (name, avatar, socials, footer) now lives in
+ * Site Settings because every route renders it — this global only owns what is
+ * unique to the home page.
+ */
 export const Home: GlobalConfig = {
   slug: 'home',
   label: 'Home Page',
@@ -7,7 +13,7 @@ export const Home: GlobalConfig = {
     read: () => true,
   },
   admin: {
-    description: 'All the content shown on the public home page.',
+    description: 'The landing page. Name, avatar and socials live in Site Settings.',
   },
   fields: [
     {
@@ -17,24 +23,6 @@ export const Home: GlobalConfig = {
           label: 'Content',
           fields: [
             {
-              name: 'profileImage',
-              type: 'upload',
-              relationTo: 'media',
-              label: 'Profile Image',
-              admin: {
-                description: 'Avatar shown at the top of the page (a square image works best).',
-              },
-            },
-            {
-              name: 'name',
-              type: 'text',
-              required: true,
-              defaultValue: 'Benjamin Rutter',
-              admin: {
-                description: 'Your name — shown as the main heading.',
-              },
-            },
-            {
               name: 'bio',
               type: 'textarea',
               required: true,
@@ -43,57 +31,6 @@ export const Home: GlobalConfig = {
               admin: {
                 description: 'A short one or two line intro shown under your name.',
               },
-            },
-            {
-              name: 'socials',
-              type: 'array',
-              label: 'Social Links',
-              labels: { singular: 'Social Link', plural: 'Social Links' },
-              admin: {
-                description:
-                  'Small inline icon links shown under your intro. Pick a platform for the icon. Optional.',
-                initCollapsed: true,
-              },
-              defaultValue: [
-                { platform: 'instagram', url: 'https://instagram.com/' },
-                { platform: 'x', url: 'https://x.com/' },
-                { platform: 'linkedin', url: 'https://linkedin.com/' },
-              ],
-              fields: [
-                {
-                  type: 'row',
-                  fields: [
-                    {
-                      name: 'platform',
-                      type: 'select',
-                      required: true,
-                      defaultValue: 'website',
-                      admin: { width: '50%' },
-                      options: [
-                        { label: 'Instagram', value: 'instagram' },
-                        { label: 'X (Twitter)', value: 'x' },
-                        { label: 'YouTube', value: 'youtube' },
-                        { label: 'LinkedIn', value: 'linkedin' },
-                        { label: 'TikTok', value: 'tiktok' },
-                        { label: 'Threads', value: 'threads' },
-                        { label: 'GitHub', value: 'github' },
-                        { label: 'Facebook', value: 'facebook' },
-                        { label: 'Email', value: 'email' },
-                        { label: 'Website / Other', value: 'website' },
-                      ],
-                    },
-                    {
-                      name: 'url',
-                      type: 'text',
-                      required: true,
-                      admin: {
-                        width: '50%',
-                        description: 'Use a mailto: link for Email.',
-                      },
-                    },
-                  ],
-                },
-              ],
             },
             {
               name: 'linkGroups',
@@ -152,7 +89,8 @@ export const Home: GlobalConfig = {
                   labels: { singular: 'Link', plural: 'Links' },
                   minRows: 1,
                   admin: {
-                    description: 'Each link is a glass card: thumbnail, title and short description.',
+                    description:
+                      'Each link is a glass card: thumbnail, title and short description.',
                     initCollapsed: true,
                   },
                   fields: [
@@ -185,48 +123,9 @@ export const Home: GlobalConfig = {
                 },
               ],
             },
-            {
-              name: 'footerText',
-              type: 'text',
-              label: 'Footer Text',
-              defaultValue: `© ${new Date().getFullYear()} Benjamin Rutter`,
-              admin: {
-                description: 'Small text shown in the footer.',
-              },
-            },
           ],
         },
-        {
-          label: 'SEO',
-          fields: [
-            {
-              name: 'metaTitle',
-              type: 'text',
-              label: 'Meta Title',
-              defaultValue: 'Benjamin Rutter',
-              admin: {
-                description: 'Browser tab title and search/social title.',
-              },
-            },
-            {
-              name: 'metaDescription',
-              type: 'textarea',
-              label: 'Meta Description',
-              admin: {
-                description: 'Short summary for search engines and link previews.',
-              },
-            },
-            {
-              name: 'ogImage',
-              type: 'upload',
-              relationTo: 'media',
-              label: 'Social Share Image',
-              admin: {
-                description: 'Image shown when the site is shared (recommended 1200×630).',
-              },
-            },
-          ],
-        },
+        seoTab('Benjamin Rutter'),
       ],
     },
   ],

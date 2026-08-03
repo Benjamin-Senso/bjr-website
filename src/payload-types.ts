@@ -88,10 +88,20 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
+    'site-settings': SiteSetting;
     home: Home;
+    about: About;
+    work: Work;
+    writing: Writing;
+    contact: Contact;
   };
   globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
+    work: WorkSelect<false> | WorkSelect<true>;
+    writing: WritingSelect<false> | WritingSelect<true>;
+    contact: ContactSelect<false> | ContactSelect<true>;
   };
   locale: null;
   widgets: {
@@ -323,27 +333,23 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * All the content shown on the public home page.
+ * Identity, social links, footer and default SEO — shared by every page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home".
+ * via the `definition` "site-settings".
  */
-export interface Home {
+export interface SiteSetting {
   id: number;
   /**
-   * Avatar shown at the top of the page (a square image works best).
+   * Avatar shown on the home page (a square image works best).
    */
   profileImage?: (number | null) | Media;
   /**
-   * Your name — shown as the main heading.
+   * Your name — the main heading and the nav wordmark.
    */
   name: string;
   /**
-   * A short one or two line intro shown under your name.
-   */
-  bio: string;
-  /**
-   * Small inline icon links shown under your intro. Pick a platform for the icon. Optional.
+   * Shown under your intro on the home page and again on the contact page.
    */
   socials?:
     | {
@@ -365,6 +371,37 @@ export interface Home {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Small text shown in the footer of every page.
+   */
+  footerText?: string | null;
+  /**
+   * Appended to each page title, e.g. "About · Benjamin Rutter". Leave blank for none.
+   */
+  metaTitleSuffix?: string | null;
+  /**
+   * Used on any page that has not set its own description.
+   */
+  metaDescription?: string | null;
+  /**
+   * Used on any page that has not set its own (recommended 1200×630).
+   */
+  ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The landing page. Name, avatar and socials live in Site Settings.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home".
+ */
+export interface Home {
+  id: number;
+  /**
+   * A short one or two line intro shown under your name.
+   */
+  bio: string;
   /**
    * Each tab is a group of link cards. The first tab is selected by default. If there is only one tab, the tab bar is hidden.
    */
@@ -390,11 +427,7 @@ export interface Home {
       }[]
     | null;
   /**
-   * Small text shown in the footer.
-   */
-  footerText?: string | null;
-  /**
-   * Browser tab title and search/social title.
+   * Browser tab title and search/social title for this page.
    */
   metaTitle?: string | null;
   /**
@@ -402,7 +435,187 @@ export interface Home {
    */
   metaDescription?: string | null;
   /**
-   * Image shown when the site is shared (recommended 1200×630).
+   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
+   */
+  ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The /about page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  heading: string;
+  /**
+   * One or two lines directly under the heading.
+   */
+  intro?: string | null;
+  /**
+   * The long-form bio.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Optional image shown alongside the bio.
+   */
+  portrait?: (number | null) | Media;
+  /**
+   * Optional short label/value pairs shown as a small grid, e.g. "Based / Dubai".
+   */
+  facts?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Browser tab title and search/social title for this page.
+   */
+  metaTitle?: string | null;
+  /**
+   * Short summary for search engines and link previews.
+   */
+  metaDescription?: string | null;
+  /**
+   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
+   */
+  ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The /work page — the ventures and companies you are behind.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "work".
+ */
+export interface Work {
+  id: number;
+  heading: string;
+  /**
+   * One or two lines directly under the heading.
+   */
+  intro?: string | null;
+  /**
+   * Each venture renders as a glass card.
+   */
+  ventures?:
+    | {
+        /**
+         * Square logo or mark. Optional.
+         */
+        logo?: (number | null) | Media;
+        name: string;
+        /**
+         * e.g. Founder, Partner.
+         */
+        role?: string | null;
+        description?: string | null;
+        url?: string | null;
+        status?: ('active' | 'exited' | 'advisory' | 'building') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Browser tab title and search/social title for this page.
+   */
+  metaTitle?: string | null;
+  /**
+   * Short summary for search engines and link previews.
+   */
+  metaDescription?: string | null;
+  /**
+   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
+   */
+  ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The /writing page. Posts are pulled automatically from beehiiv.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "writing".
+ */
+export interface Writing {
+  id: number;
+  heading: string;
+  /**
+   * One or two lines directly under the heading.
+   */
+  intro?: string | null;
+  showSubscribe?: boolean | null;
+  subscribeHeading?: string | null;
+  subscribeBlurb?: string | null;
+  postLimit?: number | null;
+  /**
+   * Browser tab title and search/social title for this page.
+   */
+  metaTitle?: string | null;
+  /**
+   * Short summary for search engines and link previews.
+   */
+  metaDescription?: string | null;
+  /**
+   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
+   */
+  ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The /contact page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact".
+ */
+export interface Contact {
+  id: number;
+  heading: string;
+  /**
+   * A short line about what to get in touch about.
+   */
+  intro?: string | null;
+  /**
+   * Rendered as a mailto: link. Just the address, no "mailto:" prefix.
+   */
+  email?: string | null;
+  /**
+   * Optional, e.g. "Open to advisory roles from Q1".
+   */
+  availability?: string | null;
+  /**
+   * Repeats the socials from Site Settings on this page.
+   */
+  showSocials?: boolean | null;
+  /**
+   * Browser tab title and search/social title for this page.
+   */
+  metaTitle?: string | null;
+  /**
+   * Short summary for search engines and link previews.
+   */
+  metaDescription?: string | null;
+  /**
+   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
    */
   ogImage?: (number | null) | Media;
   updatedAt?: string | null;
@@ -410,12 +623,11 @@ export interface Home {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "home_select".
+ * via the `definition` "site-settings_select".
  */
-export interface HomeSelect<T extends boolean = true> {
+export interface SiteSettingsSelect<T extends boolean = true> {
   profileImage?: T;
   name?: T;
-  bio?: T;
   socials?:
     | T
     | {
@@ -423,6 +635,20 @@ export interface HomeSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  footerText?: T;
+  metaTitleSuffix?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home_select".
+ */
+export interface HomeSelect<T extends boolean = true> {
+  bio?: T;
   linkGroups?:
     | T
     | {
@@ -438,7 +664,89 @@ export interface HomeSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  footerText?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  body?: T;
+  portrait?: T;
+  facts?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "work_select".
+ */
+export interface WorkSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  ventures?:
+    | T
+    | {
+        logo?: T;
+        name?: T;
+        role?: T;
+        description?: T;
+        url?: T;
+        status?: T;
+        id?: T;
+      };
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "writing_select".
+ */
+export interface WritingSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  showSubscribe?: T;
+  subscribeHeading?: T;
+  subscribeBlurb?: T;
+  postLimit?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact_select".
+ */
+export interface ContactSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  email?: T;
+  availability?: T;
+  showSocials?: T;
   metaTitle?: T;
   metaDescription?: T;
   ogImage?: T;

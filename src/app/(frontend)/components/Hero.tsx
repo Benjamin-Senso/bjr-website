@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import type { Home } from '@/payload-types'
+import type { SiteSetting } from '@/payload-types'
 import { resolveMedia } from '../lib/media'
 
 export function Hero({
@@ -9,7 +9,7 @@ export function Hero({
 }: {
   name: string
   bio: string
-  profileImage: Home['profileImage']
+  profileImage: SiteSetting['profileImage']
 }) {
   const avatar = resolveMedia(profileImage)
   const initials = name

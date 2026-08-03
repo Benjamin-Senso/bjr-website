@@ -7,7 +7,12 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { SiteSettings } from './globals/SiteSettings'
 import { Home } from './globals/Home'
+import { About } from './globals/About'
+import { Work } from './globals/Work'
+import { Writing } from './globals/Writing'
+import { Contact } from './globals/Contact'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +28,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media],
-  globals: [Home],
+  globals: [SiteSettings, Home, About, Work, Writing, Contact],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
