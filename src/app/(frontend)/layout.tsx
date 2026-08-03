@@ -22,7 +22,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage =
     home?.ogImage && typeof home.ogImage === 'object' ? home.ogImage.url : undefined
 
+  const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL
+
   return {
+    // Makes the OG/Twitter image URLs absolute, which social scrapers require.
+    metadataBase: siteUrl ? new URL(siteUrl) : undefined,
     title,
     description,
     openGraph: {

@@ -33,9 +33,11 @@ export default buildConfig({
     client: {
       url: process.env.DATABASE_URI || 'file:./bjr.db',
     },
-    // Auto-create/sync the schema on boot. On a fresh server (empty volume) this
-    // builds all tables on first run, so no separate migration step is needed.
-    push: true,
+    // Dev only: auto-sync the local schema as fields change. In production this
+    // must stay off — push can ask an interactive "created or renamed?" question,
+    // which hangs the container (no TTY). Production applies migrations instead;
+    // the Docker CMD runs `payload migrate` before starting.
+    push: process.env.NODE_ENV !== 'production',
   }),
   sharp,
   plugins: [],
