@@ -58,23 +58,24 @@ export const Home: GlobalConfig = {
               defaultValue: [
                 {
                   title: 'Work',
-                  description: 'The studio, selected projects and the ventures behind them.',
+                  description:
+                    'Senso is a brand, product and venture studio working with internet-first, growth-stage companies across the UK, EU and MENA. Positioning, identity and product, plus the operational spine underneath it.',
+                  tags: [{ label: 'Senso' }, { label: 'Signet' }, { label: 'Mandem Meetup' }],
                   url: '/work',
                 },
                 {
                   title: 'About',
-                  description: 'How I got here, and why the two sides sit together.',
+                  description:
+                    'I picked up Adobe at eight and never put it down. Somewhere along the way I got as interested in how a studio runs as in what it makes. Most brand people cannot build systems, most ops people cannot build brand.',
+                  tags: [{ label: 'Brand' }, { label: 'Product' }, { label: 'Operations' }],
                   url: '/about',
                 },
                 {
                   title: 'Contact',
-                  description: 'For brand, product or advisory work.',
+                  description:
+                    'For brand and product work, advisory, or a venture you want a partner on. Two entities, one UK and one UAE.',
+                  tags: [{ label: 'Advisory' }, { label: 'Ventures' }],
                   url: '/contact',
-                },
-                {
-                  title: 'Senso Studio',
-                  description: 'Brand, product and systems for growth-stage companies.',
-                  url: 'https://sensostudio.co',
                 },
               ],
               fields: [
@@ -82,20 +83,38 @@ export const Home: GlobalConfig = {
                   name: 'image',
                   type: 'upload',
                   relationTo: 'media',
-                  label: 'Thumbnail',
+                  label: 'Cover Image',
                   admin: {
-                    description: 'Small image shown on the left of the card. Optional.',
+                    description: 'Optional image across the top of the panel. Landscape (16:9).',
                   },
                 },
                 { name: 'title', type: 'text', required: true },
-                { name: 'description', type: 'text', label: 'Short Description' },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  label: 'Description',
+                  admin: {
+                    description: 'Two or three lines. Give it enough to be worth clicking.',
+                  },
+                },
+                {
+                  name: 'tags',
+                  type: 'array',
+                  label: 'Tags',
+                  labels: { singular: 'Tag', plural: 'Tags' },
+                  admin: {
+                    description: 'Small pills along the bottom. Keep to three or four.',
+                    initCollapsed: true,
+                  },
+                  fields: [{ name: 'label', type: 'text', required: true }],
+                },
                 {
                   name: 'url',
                   type: 'text',
                   label: 'URL',
                   required: true,
                   admin: {
-                    description: 'An external URL, or an internal path such as /ventures.',
+                    description: 'An external URL, or an internal path such as /work.',
                   },
                 },
               ],

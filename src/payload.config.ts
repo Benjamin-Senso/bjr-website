@@ -8,6 +8,7 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Ventures } from './collections/Ventures'
+import { r2Storage } from './lib/storage'
 import { SiteSettings } from './globals/SiteSettings'
 import { Home } from './globals/Home'
 import { About } from './globals/About'
@@ -47,5 +48,5 @@ export default buildConfig({
     push: process.env.NODE_ENV !== 'production',
   }),
   sharp,
-  plugins: [],
+  plugins: [r2Storage],
 })

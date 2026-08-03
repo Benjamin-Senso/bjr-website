@@ -164,6 +164,16 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
   await db.run(sql`CREATE INDEX \`site_settings_profile_image_idx\` ON \`site_settings\` (\`profile_image_id\`);`)
   await db.run(sql`CREATE INDEX \`site_settings_og_image_idx\` ON \`site_settings\` (\`og_image_id\`);`)
+  await db.run(sql`CREATE TABLE \`home_links_tags\` (
+  	\`_order\` integer NOT NULL,
+  	\`_parent_id\` text NOT NULL,
+  	\`id\` text PRIMARY KEY NOT NULL,
+  	\`label\` text NOT NULL,
+  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`home_links\`(\`id\`) ON UPDATE no action ON DELETE cascade
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`home_links_tags_order_idx\` ON \`home_links_tags\` (\`_order\`);`)
+  await db.run(sql`CREATE INDEX \`home_links_tags_parent_id_idx\` ON \`home_links_tags\` (\`_parent_id\`);`)
   await db.run(sql`CREATE TABLE \`home_links\` (
   	\`_order\` integer NOT NULL,
   	\`_parent_id\` integer NOT NULL,
@@ -324,6 +334,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.run(sql`DROP TABLE \`payload_migrations\`;`)
   await db.run(sql`DROP TABLE \`site_settings_socials\`;`)
   await db.run(sql`DROP TABLE \`site_settings\`;`)
+  await db.run(sql`DROP TABLE \`home_links_tags\`;`)
   await db.run(sql`DROP TABLE \`home_links\`;`)
   await db.run(sql`DROP TABLE \`home\`;`)
   await db.run(sql`DROP TABLE \`about_help_with\`;`)

@@ -470,13 +470,25 @@ export interface Home {
   links?:
     | {
         /**
-         * Small image shown on the left of the card. Optional.
+         * Optional image across the top of the panel. Landscape (16:9).
          */
         image?: (number | null) | Media;
         title: string;
+        /**
+         * Two or three lines. Give it enough to be worth clicking.
+         */
         description?: string | null;
         /**
-         * An external URL, or an internal path such as /ventures.
+         * Small pills along the bottom. Keep to three or four.
+         */
+        tags?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * An external URL, or an internal path such as /work.
          */
         url: string;
         id?: string | null;
@@ -754,6 +766,12 @@ export interface HomeSelect<T extends boolean = true> {
         image?: T;
         title?: T;
         description?: T;
+        tags?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
         url?: T;
         id?: T;
       };
