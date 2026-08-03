@@ -7,11 +7,11 @@ export function Footer({ text }: { text?: string | null }) {
         href="https://sensostudio.co"
         target="_blank"
         rel="noreferrer noopener"
-        className="liquid-glass hover:text-foreground group inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs transition-colors"
+        className="liquid-glass hover:text-foreground hover-tint group inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs"
       >
         <span className="bg-accent h-1.5 w-1.5 rounded-full" aria-hidden="true" />
         Crafted by Senso
-        <span aria-hidden="true" className="group-hover:text-accent transition-colors">
+        <span aria-hidden="true" className="group-hover:text-accent hover-arrow hover-arrow-diagonal">
           ↗
         </span>
       </a>

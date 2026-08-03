@@ -79,7 +79,7 @@ export function Nav({ routes, cta }: { routes: NavRoute[]; cta: NavRoute }) {
               className={
                 'absolute inset-y-0 left-0 rounded-full ' +
                 (ready
-                  ? 'transition-[transform,width,background-color,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] '
+                  ? 'nav-indicator '
                   : '') +
                 (ctaActive ? 'border-accent/60 bg-accent/25 border' : 'bg-white/10')
               }
@@ -104,7 +104,7 @@ export function Nav({ routes, cta }: { routes: NavRoute[]; cta: NavRoute }) {
                 }}
                 aria-current={active ? 'page' : undefined}
                 className={
-                  'relative z-10 rounded-full px-3 py-1.5 text-sm transition-colors sm:px-4 ' +
+                  'hover-tint relative z-10 rounded-full px-3 py-1.5 text-sm sm:px-4 ' +
                   (isCta ? 'border-accent/50 ml-1 inline-flex items-center gap-1 border font-medium ' : '') +
                   (active
                     ? 'text-foreground'

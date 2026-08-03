@@ -18,6 +18,20 @@
   /* Display face — headings only, body stays on the sans stack. */
   --font-display:
     var(--font-instrument-serif), ui-serif, Georgia, 'Times New Roman', serif;
+
+  /* ---------------------------------------------------------------- *
+   * Motion
+   *  One easing curve across the whole site. Expo-out starts fast and
+   *  settles slowly, which reads as weighted rather than springy. The
+   *  browser default (ease) accelerates into the finish and is what
+   *  makes stock hover states feel cheap.
+   * ---------------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.33, 1, 0.68, 1);
+
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-slow: 900ms;
 }
 
 * {
@@ -107,7 +121,7 @@ a {
     transparent 60%
   );
   opacity: var(--glow, 0.5);
-  transition: opacity 0.3s ease;
+  transition: opacity var(--dur-base) var(--ease-out-soft);
   pointer-events: none;
 }
 
@@ -133,10 +147,125 @@ a {
   pointer-events: none;
 }
 
-/* Respect users who prefer reduced motion */
+/* ------------------------------------------------------------------ *
+ * Interaction
+ *
+ * One shared hover treatment rather than per-component Tailwind classes,
+ * so every card moves identically. The lift is deliberately small: 3px
+ * reads as the surface responding, where the 4px+ jump of a stock hover
+ * reads as the layout twitching.
+ *
+ * Only transform, box-shadow, border-color and opacity are animated.
+ * These are the properties the compositor can handle without re-laying
+ * out the page, which is what keeps it smooth on a long grid.
+ * ------------------------------------------------------------------ */
+.hover-lift {
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo),
+    box-shadow var(--dur-base) var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .hover-lift:hover {
+    transform: translate3d(0, -3px, 0);
+    border-color: color-mix(in srgb, var(--color-accent) 42%, transparent);
+    box-shadow:
+      0 18px 46px rgba(0, 0, 0, 0.5),
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 16%, transparent),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Press state: settles back towards the surface, so a click feels physical.
+   Faster than the release so it responds instantly and relaxes gently. */
+.hover-lift:active {
+  transform: translate3d(0, -1px, 0);
+  transition-duration: var(--dur-fast);
+}
+
+/* Media inside a hover target. The zoom is slow and small on purpose: a
+   long, barely-perceptible drift feels expensive, a fast 1.1x does not. */
+.hover-media {
+  transform: scale(1.0001); /* promotes the layer up front, avoiding a
+                               first-hover repaint flicker in Safari */
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .hover-lift:hover .hover-media {
+    transform: scale(1.045);
+  }
+}
+
+/* The sliding pill behind the active nav item and work filter. Shares the
+   site easing so it feels related to the card motion rather than separate. */
+.nav-indicator {
+  transition:
+    transform var(--dur-base) var(--ease-out-expo),
+    width var(--dur-base) var(--ease-out-expo),
+    background-color var(--dur-fast) var(--ease-out-soft),
+    border-color var(--dur-fast) var(--ease-out-soft);
+}
+
+/* Social icons: a small rise, no colour flash. */
+.social-link {
+  transition:
+    color var(--dur-fast) var(--ease-out-soft),
+    transform var(--dur-base) var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .social-link:hover {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+/* Links, pills and buttons: colour only, quick but still eased. */
+.hover-tint {
+  transition:
+    color var(--dur-fast) var(--ease-out-soft),
+    background-color var(--dur-fast) var(--ease-out-soft),
+    border-color var(--dur-fast) var(--ease-out-soft);
+}
+
+/* The arrow that trails a card or link. Nudges in the direction it points. */
+.hover-arrow {
+  display: inline-block;
+  transition:
+    transform var(--dur-base) var(--ease-out-expo),
+    color var(--dur-fast) var(--ease-out-soft);
+}
+
+@media (hover: hover) {
+  .group:hover .hover-arrow {
+    transform: translate3d(3px, 0, 0);
+  }
+  /* Diagonal arrows travel up and to the right instead. */
+  .group:hover .hover-arrow-diagonal {
+    transform: translate3d(2px, -2px, 0);
+  }
+}
+
+/* Respect users who prefer reduced motion.
+   Transforms are removed outright; colour changes are kept but made
+   instant, so hover still communicates interactivity. */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    animation: none !important;
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .hover-lift:hover,
+  .hover-lift:active,
+  .hover-lift:hover .hover-media,
+  .group:hover .hover-arrow,
+  .group:hover .hover-arrow-diagonal {
+    transform: none !important;
   }
 }

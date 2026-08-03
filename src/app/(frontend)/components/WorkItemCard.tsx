@@ -21,7 +21,7 @@ export function WorkItemCard({ item }: { item: WorkItem }) {
   return (
     <Link
       href={`/work/${item.slug}`}
-      className="liquid-glass group hover:border-accent/45 flex flex-col overflow-hidden rounded-2xl transition-[border-color,transform] duration-300 hover:-translate-y-1"
+      className="liquid-glass hover-lift group flex flex-col overflow-hidden rounded-2xl"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-white/[0.04]">
         {cover ? (
@@ -30,7 +30,7 @@ export function WorkItemCard({ item }: { item: WorkItem }) {
             alt={cover.alt || item.name}
             fill
             sizes="(min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="hover-media object-cover"
           />
         ) : (
           <span className="text-muted/50 font-display flex h-full w-full items-center justify-center text-5xl">
@@ -50,7 +50,7 @@ export function WorkItemCard({ item }: { item: WorkItem }) {
           <h3 className="font-display text-xl font-normal">{item.name}</h3>
           <span
             aria-hidden="true"
-            className="text-muted group-hover:text-accent shrink-0 transition-colors"
+            className="text-muted group-hover:text-accent hover-arrow shrink-0"
           >
             →
           </span>

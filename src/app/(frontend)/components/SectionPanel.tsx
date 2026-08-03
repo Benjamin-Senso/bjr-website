@@ -21,7 +21,7 @@ export function SectionPanel({ link }: { link: LinkItem }) {
   const tags = link.tags ?? []
 
   const className =
-    'liquid-glass group hover:border-accent/45 flex flex-col overflow-hidden rounded-2xl text-left transition-[border-color,transform] duration-300 hover:-translate-y-1'
+    'liquid-glass hover-lift group flex flex-col overflow-hidden rounded-2xl text-left'
 
   const inner = (
     <>
@@ -32,7 +32,7 @@ export function SectionPanel({ link }: { link: LinkItem }) {
             alt={cover.alt || link.title}
             fill
             sizes="(min-width: 640px) 512px, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="hover-media object-cover"
           />
         </div>
       ) : null}
@@ -42,7 +42,7 @@ export function SectionPanel({ link }: { link: LinkItem }) {
           <h2 className="font-display min-w-0 text-2xl font-normal">{link.title}</h2>
           <span
             aria-hidden="true"
-            className="text-muted group-hover:text-accent mt-1 shrink-0 transition-colors"
+            className={`text-muted group-hover:text-accent hover-arrow mt-1 shrink-0 ${isInternal ? '' : 'hover-arrow-diagonal'}`}
           >
             {isInternal ? '→' : '↗'}
           </span>

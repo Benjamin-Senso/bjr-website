@@ -20,7 +20,7 @@ export function PostCard({ post }: { post: BeehiivPost }) {
       href={post.webUrl}
       target="_blank"
       rel="noreferrer noopener"
-      className="liquid-glass group block rounded-2xl p-5 transition-transform hover:-translate-y-0.5"
+      className="liquid-glass hover-lift group block rounded-2xl p-5"
     >
       <div className="flex items-start gap-4">
         {post.thumbnailUrl ? (
@@ -44,7 +44,7 @@ export function PostCard({ post }: { post: BeehiivPost }) {
           ) : null}
         </div>
 
-        <span aria-hidden="true" className="text-muted group-hover:text-accent shrink-0 transition-colors">
+        <span aria-hidden="true" className="text-muted group-hover:text-accent hover-arrow hover-arrow-diagonal shrink-0">
           →
         </span>
       </div>

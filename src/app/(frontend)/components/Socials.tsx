@@ -56,7 +56,7 @@ export function Socials({ socials }: { socials: SiteSetting['socials'] }) {
                 rel="noopener noreferrer"
                 aria-label={label}
                 title={label}
-                className="text-muted hover:text-accent inline-flex transition-colors hover:-translate-y-0.5"
+                className="text-muted hover:text-accent social-link inline-flex"
               >
                 <Icon className="h-5 w-5" />
               </a>

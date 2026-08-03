@@ -67,7 +67,7 @@ export default async function WorkItemPage({ params }: Params) {
 
       <Link
         href="/work"
-        className="text-muted hover:text-foreground mb-8 inline-flex items-center gap-1.5 self-start text-sm transition-colors"
+        className="text-muted hover:text-foreground hover-tint mb-8 inline-flex items-center gap-1.5 self-start text-sm"
       >
         <span aria-hidden="true">←</span> Back to work
       </Link>
@@ -104,10 +104,10 @@ export default async function WorkItemPage({ params }: Params) {
           href={item.url}
           target="_blank"
           rel="noreferrer noopener"
-          className="border-accent/50 bg-accent/15 text-accent hover:bg-accent/25 hover:text-foreground mt-8 inline-flex items-center gap-1.5 self-start rounded-full border px-5 py-2.5 text-sm font-medium transition-colors"
+          className="border-accent/50 bg-accent/15 text-accent hover:bg-accent/25 hover:text-foreground hover-tint group mt-8 inline-flex items-center gap-1.5 self-start rounded-full border px-5 py-2.5 text-sm font-medium"
         >
           Visit {item.name}
-          <span aria-hidden="true" className="text-[0.8em]">
+          <span aria-hidden="true" className="hover-arrow hover-arrow-diagonal text-[0.8em]">
             ↗
           </span>
         </a>

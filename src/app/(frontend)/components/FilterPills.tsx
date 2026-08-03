@@ -58,7 +58,7 @@ export function FilterPills({
               className={
                 'bg-accent/20 border-accent/50 absolute inset-y-0 left-0 rounded-full border ' +
                 (ready
-                  ? 'transition-[transform,width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]'
+                  ? 'nav-indicator'
                   : '')
               }
               style={{
@@ -81,7 +81,7 @@ export function FilterPills({
                 }}
                 onClick={() => onChange(filter.value)}
                 className={
-                  'relative z-10 rounded-full px-4 py-1.5 text-sm transition-colors ' +
+                  'hover-tint relative z-10 rounded-full px-4 py-1.5 text-sm ' +
                   (isActive ? 'text-foreground' : 'text-muted hover:text-foreground')
                 }
               >

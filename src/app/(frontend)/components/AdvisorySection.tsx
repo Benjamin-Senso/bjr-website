@@ -42,10 +42,10 @@ export function AdvisorySection({ advisory }: { advisory?: Advisory | null }) {
           isInternal ? (
             <Link
               href={advisory.ctaUrl}
-              className="border-accent/50 bg-accent/15 text-accent hover:bg-accent/25 hover:text-foreground mt-7 inline-flex items-center gap-1.5 rounded-full border px-5 py-2.5 text-sm font-medium transition-colors"
+              className="border-accent/50 bg-accent/15 text-accent hover:bg-accent/25 hover:text-foreground hover-tint group mt-7 inline-flex items-center gap-1.5 rounded-full border px-5 py-2.5 text-sm font-medium"
             >
               {advisory.ctaLabel}
-              <span aria-hidden="true" className="text-[0.8em]">
+              <span aria-hidden="true" className="hover-arrow text-[0.8em]">
                 →
               </span>
             </Link>
@@ -54,10 +54,10 @@ export function AdvisorySection({ advisory }: { advisory?: Advisory | null }) {
               href={advisory.ctaUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="border-accent/50 bg-accent/15 text-accent hover:bg-accent/25 hover:text-foreground mt-7 inline-flex items-center gap-1.5 rounded-full border px-5 py-2.5 text-sm font-medium transition-colors"
+              className="border-accent/50 bg-accent/15 text-accent hover:bg-accent/25 hover:text-foreground hover-tint group mt-7 inline-flex items-center gap-1.5 rounded-full border px-5 py-2.5 text-sm font-medium"
             >
               {advisory.ctaLabel}
-              <span aria-hidden="true" className="text-[0.8em]">
+              <span aria-hidden="true" className="hover-arrow hover-arrow-diagonal text-[0.8em]">
                 ↗
               </span>
             </a>

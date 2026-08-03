@@ -38,7 +38,7 @@ export default async function ContactPage() {
       {contact.email ? (
         <a
           href={`mailto:${contact.email}`}
-          className="liquid-glass group mt-4 flex items-center justify-between gap-4 rounded-2xl px-6 py-5 transition-transform hover:-translate-y-0.5"
+          className="liquid-glass hover-lift group mt-4 flex items-center justify-between gap-4 rounded-2xl px-6 py-5"
         >
           <span className="min-w-0">
             <span className="text-muted block text-xs tracking-wide uppercase">
@@ -46,7 +46,7 @@ export default async function ContactPage() {
             </span>
             <span className="mt-1 block truncate text-lg">{contact.email}</span>
           </span>
-          <span aria-hidden="true" className="text-muted group-hover:text-accent transition-colors">
+          <span aria-hidden="true" className="text-muted group-hover:text-accent hover-arrow">
             →
           </span>
         </a>
