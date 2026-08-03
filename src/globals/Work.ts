@@ -159,9 +159,9 @@ export const Work: GlobalConfig = {
                         'Pipeline, finance, automation and delivery, so a lean team can punch above its size.',
                     },
                     {
-                      title: 'Studio and agency owners',
+                      title: 'Across industries',
                       description:
-                        'Systematising operations and moving a lean creative business forward.',
+                        'Hundreds of brands in very different sectors, and the problems tend to rhyme.',
                     },
                   ],
                   fields: [
