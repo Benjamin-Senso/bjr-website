@@ -8,29 +8,69 @@ import { s3Storage } from '@payloadcms/storage-s3'
  * account-scoped r2.cloudflarestorage.com host, and path-style addressing is
  * required (R2 does not support virtual-hosted buckets).
  *
- * The plugin is a no-op unless all four variables are present, so local dev
- * keeps writing to disk with no configuration.
+ * With none of the variables set the plugin is a no-op and uploads go to
+ * disk, which is what local dev wants.
  */
+
+const REQUIRED = [
+  'R2_BUCKET',
+  'R2_ENDPOINT',
+  'R2_ACCESS_KEY_ID',
+  'R2_SECRET_ACCESS_KEY',
+] as const
+
+const present = () => REQUIRED.filter((key) => Boolean(process.env[key]))
+const missing = () => REQUIRED.filter((key) => !process.env[key])
+
 export function isR2Configured(): boolean {
-  return Boolean(
-    process.env.R2_BUCKET &&
-      process.env.R2_ENDPOINT &&
-      process.env.R2_ACCESS_KEY_ID &&
-      process.env.R2_SECRET_ACCESS_KEY,
-  )
+  return missing().length === 0
 }
 
 /**
- * Public base URL for served files, e.g. https://media.example.com. Without
- * it, files are proxied through the Next server instead of hitting R2's edge
- * directly, which still works but gives up the CDN.
+ * Says which backend is active, and shouts if R2 is half-configured.
+ *
+ * A partial R2 config used to fall through to disk in silence, so uploads
+ * failed in production with no clue why. Better to name the missing variables
+ * at boot than to debug it from a red badge in the admin panel.
  */
+function reportStorageBackend() {
+  const missingKeys = missing()
+
+  if (missingKeys.length === 0) {
+    console.info(`[storage] Media uploads go to R2 bucket "${process.env.R2_BUCKET}"`)
+    if (!process.env.R2_PUBLIC_URL) {
+      console.warn(
+        '[storage] R2_PUBLIC_URL is not set, so files are proxied through this server ' +
+          'rather than served from Cloudflare. Uploads still work.',
+      )
+    }
+    return
+  }
+
+  if (missingKeys.length < REQUIRED.length) {
+    console.error(
+      `[storage] R2 is only partly configured. Set ${missingKeys.join(', ')} ` +
+        `(found ${present().join(', ')}). Falling back to local disk, which is ` +
+        `not persistent unless a volume is mounted at MEDIA_DIR.`,
+    )
+    return
+  }
+
+  console.info(
+    `[storage] Media uploads go to local disk at ${process.env.MEDIA_DIR || 'the default folder'}`,
+  )
+}
+
+reportStorageBackend()
+
 const publicBase = process.env.R2_PUBLIC_URL?.replace(/\/$/, '')
 
 export const r2Storage = s3Storage({
   enabled: isR2Configured(),
   collections: {
-    media: publicBase ? { prefix: 'media', generateFileURL: ({ filename }) => `${publicBase}/media/${filename}` } : { prefix: 'media' },
+    media: publicBase
+      ? { prefix: 'media', generateFileURL: ({ filename }) => `${publicBase}/media/${filename}` }
+      : { prefix: 'media' },
   },
   bucket: process.env.R2_BUCKET || '',
   config: {
