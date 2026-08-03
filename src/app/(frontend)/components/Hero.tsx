@@ -37,7 +37,7 @@ export function Hero({
           </span>
         )}
       </div>
-      <h1 className="mt-5 text-2xl font-semibold tracking-tight sm:text-3xl">{name}</h1>
+      <h1 className="mt-5 font-display text-3xl font-normal sm:text-4xl">{name}</h1>
       <p className="text-muted mt-2 max-w-prose leading-relaxed text-balance">{bio}</p>
     </header>
   )
