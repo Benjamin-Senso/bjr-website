@@ -620,6 +620,23 @@ export interface Work {
       }[]
     | null;
   /**
+   * Sits below the work, so the proof comes first. Keep it understated until advisory work is a bigger part of the picture.
+   */
+  advisory?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    body?: string | null;
+    points?:
+      | {
+          title: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    ctaLabel?: string | null;
+    ctaUrl?: string | null;
+  };
+  /**
    * Browser tab title and search/social title for this page.
    */
   metaTitle?: string | null;
@@ -831,6 +848,22 @@ export interface WorkSelect<T extends boolean = true> {
         description?: T;
         url?: T;
         id?: T;
+      };
+  advisory?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        body?: T;
+        points?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+        ctaLabel?: T;
+        ctaUrl?: T;
       };
   metaTitle?: T;
   metaDescription?: T;

@@ -257,6 +257,17 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`CREATE INDEX \`work_projects_order_idx\` ON \`work_projects\` (\`_order\`);`)
   await db.run(sql`CREATE INDEX \`work_projects_parent_id_idx\` ON \`work_projects\` (\`_parent_id\`);`)
   await db.run(sql`CREATE INDEX \`work_projects_cover_image_idx\` ON \`work_projects\` (\`cover_image_id\`);`)
+  await db.run(sql`CREATE TABLE \`work_advisory_points\` (
+  	\`_order\` integer NOT NULL,
+  	\`_parent_id\` integer NOT NULL,
+  	\`id\` text PRIMARY KEY NOT NULL,
+  	\`title\` text,
+  	\`description\` text,
+  	FOREIGN KEY (\`_parent_id\`) REFERENCES \`work\`(\`id\`) ON UPDATE no action ON DELETE cascade
+  );
+  `)
+  await db.run(sql`CREATE INDEX \`work_advisory_points_order_idx\` ON \`work_advisory_points\` (\`_order\`);`)
+  await db.run(sql`CREATE INDEX \`work_advisory_points_parent_id_idx\` ON \`work_advisory_points\` (\`_parent_id\`);`)
   await db.run(sql`CREATE TABLE \`work\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`heading\` text DEFAULT 'Work' NOT NULL,
@@ -264,6 +275,11 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	\`body\` text,
   	\`studio_url\` text DEFAULT 'https://sensostudio.co',
   	\`studio_link_label\` text DEFAULT 'Visit Senso Studio',
+  	\`advisory_enabled\` integer DEFAULT true,
+  	\`advisory_heading\` text DEFAULT 'Advisory and consultancy',
+  	\`advisory_body\` text DEFAULT 'Alongside the studio I take on a small number of advisory and consulting engagements. Usually founders and operators who need brand and product that pulls commercial weight, and the operational spine to run it.',
+  	\`advisory_cta_label\` text DEFAULT 'Start a conversation',
+  	\`advisory_cta_url\` text DEFAULT '/contact',
   	\`meta_title\` text DEFAULT 'Work',
   	\`meta_description\` text,
   	\`og_image_id\` integer,
@@ -306,7 +322,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`CREATE TABLE \`contact\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`heading\` text DEFAULT 'Contact' NOT NULL,
-  	\`intro\` text DEFAULT 'If you are building something and want brand and product that pulls commercial weight, get in touch.',
+  	\`intro\` text DEFAULT 'Studio work, advisory and consulting, or a venture you want a partner on. If you are building something and want brand and product that pulls commercial weight, get in touch.',
   	\`email\` text,
   	\`availability\` text,
   	\`show_socials\` integer DEFAULT true,
@@ -341,6 +357,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.run(sql`DROP TABLE \`about_facts\`;`)
   await db.run(sql`DROP TABLE \`about\`;`)
   await db.run(sql`DROP TABLE \`work_projects\`;`)
+  await db.run(sql`DROP TABLE \`work_advisory_points\`;`)
   await db.run(sql`DROP TABLE \`work\`;`)
   await db.run(sql`DROP TABLE \`ventures_page\`;`)
   await db.run(sql`DROP TABLE \`writing\`;`)

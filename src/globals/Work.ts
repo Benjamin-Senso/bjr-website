@@ -110,6 +110,87 @@ export const Work: GlobalConfig = {
                 { name: 'url', type: 'text', label: 'URL' },
               ],
             },
+            {
+              name: 'advisory',
+              type: 'group',
+              label: 'Advisory',
+              admin: {
+                description:
+                  'Sits below the work, so the proof comes first. Keep it understated until advisory work is a bigger part of the picture.',
+              },
+              fields: [
+                {
+                  name: 'enabled',
+                  type: 'checkbox',
+                  label: 'Show this section',
+                  defaultValue: true,
+                },
+                {
+                  name: 'heading',
+                  type: 'text',
+                  defaultValue: 'Advisory and consultancy',
+                  admin: { condition: (_, s) => Boolean(s?.enabled) },
+                },
+                {
+                  name: 'body',
+                  type: 'textarea',
+                  defaultValue:
+                    'Alongside the studio I take on a small number of advisory and consulting engagements. Usually founders and operators who need brand and product that pulls commercial weight, and the operational spine to run it.',
+                  admin: { condition: (_, s) => Boolean(s?.enabled) },
+                },
+                {
+                  name: 'points',
+                  type: 'array',
+                  label: 'What that looks like',
+                  labels: { singular: 'Point', plural: 'Points' },
+                  admin: {
+                    initCollapsed: true,
+                    condition: (_, s) => Boolean(s?.enabled),
+                  },
+                  defaultValue: [
+                    {
+                      title: 'Brand-led growth',
+                      description:
+                        'Positioning and product that make a new company look and feel like it has been around for years.',
+                    },
+                    {
+                      title: 'The operating spine',
+                      description:
+                        'Pipeline, finance, automation and delivery, so a lean team can punch above its size.',
+                    },
+                    {
+                      title: 'Studio and agency owners',
+                      description:
+                        'Systematising operations and moving a lean creative business forward.',
+                    },
+                  ],
+                  fields: [
+                    { name: 'title', type: 'text', required: true },
+                    { name: 'description', type: 'textarea' },
+                  ],
+                },
+                {
+                  type: 'row',
+                  admin: { condition: (_, s) => Boolean(s?.enabled) },
+                  fields: [
+                    {
+                      name: 'ctaLabel',
+                      type: 'text',
+                      label: 'CTA Label',
+                      defaultValue: 'Start a conversation',
+                      admin: { width: '50%' },
+                    },
+                    {
+                      name: 'ctaUrl',
+                      type: 'text',
+                      label: 'CTA URL',
+                      defaultValue: '/contact',
+                      admin: { width: '50%' },
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
         seoTab('Work'),

@@ -32,7 +32,7 @@ export const Contact: GlobalConfig = {
               type: 'textarea',
               label: 'Intro',
               defaultValue:
-                'If you are building something and want brand and product that pulls commercial weight, get in touch.',
+                'Studio work, advisory and consulting, or a venture you want a partner on. If you are building something and want brand and product that pulls commercial weight, get in touch.',
               admin: {
                 description: 'A short line about what to get in touch about.',
               },

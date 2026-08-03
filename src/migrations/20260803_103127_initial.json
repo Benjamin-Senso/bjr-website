@@ -1768,6 +1768,80 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "work_advisory_points": {
+      "name": "work_advisory_points",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "work_advisory_points_order_idx": {
+          "name": "work_advisory_points_order_idx",
+          "columns": [
+            "_order"
+          ],
+          "isUnique": false
+        },
+        "work_advisory_points_parent_id_idx": {
+          "name": "work_advisory_points_parent_id_idx",
+          "columns": [
+            "_parent_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "work_advisory_points_parent_id_fk": {
+          "name": "work_advisory_points_parent_id_fk",
+          "tableFrom": "work_advisory_points",
+          "tableTo": "work",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "work": {
       "name": "work",
       "columns": {
@@ -1816,6 +1890,46 @@
           "notNull": false,
           "autoincrement": false,
           "default": "'Visit Senso Studio'"
+        },
+        "advisory_enabled": {
+          "name": "advisory_enabled",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": true
+        },
+        "advisory_heading": {
+          "name": "advisory_heading",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'Advisory and consultancy'"
+        },
+        "advisory_body": {
+          "name": "advisory_body",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'Alongside the studio I take on a small number of advisory and consulting engagements. Usually founders and operators who need brand and product that pulls commercial weight, and the operational spine to run it.'"
+        },
+        "advisory_cta_label": {
+          "name": "advisory_cta_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'Start a conversation'"
+        },
+        "advisory_cta_url": {
+          "name": "advisory_cta_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'/contact'"
         },
         "meta_title": {
           "name": "meta_title",
@@ -2120,7 +2234,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "'If you are building something and want brand and product that pulls commercial weight, get in touch.'"
+          "default": "'Studio work, advisory and consulting, or a venture you want a partner on. If you are building something and want brand and product that pulls commercial weight, get in touch.'"
         },
         "email": {
           "name": "email",
@@ -2219,6 +2333,6 @@
   "internal": {
     "indexes": {}
   },
-  "id": "74c9d993-e06b-4716-a6ba-5b39b6f1c3b6",
+  "id": "04a19ccb-72e6-4720-aeaf-754835221a3c",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

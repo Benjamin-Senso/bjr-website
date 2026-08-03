@@ -3,6 +3,7 @@ import { PageShell } from '../components/PageShell'
 import { PageHeader } from '../components/PageHeader'
 import { Prose } from '../components/Prose'
 import { WorkGrid } from '../components/WorkGrid'
+import { AdvisorySection } from '../components/AdvisorySection'
 import { getGlobal, getVentures } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
 
@@ -42,6 +43,8 @@ export default async function WorkPage() {
       ) : null}
 
       <WorkGrid projects={projects} ventures={ventures} />
+
+      <AdvisorySection advisory={work.advisory} />
     </PageShell>
   )
 }
