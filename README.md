@@ -189,9 +189,14 @@ terminates TLS and routes to the container over the shared `dokploy-network`, so
    | A | `@` | your VPS IP | DNS only |
    | A | `www` | your VPS IP | DNS only |
 
-   If DNS is on Cloudflare, the records must be **DNS only** (grey cloud), not proxied.
-   Traefik answers the Let's Encrypt HTTP-01 challenge itself, and Cloudflare's proxy
-   intercepts it, so an orange cloud makes certificate issuance fail.
+   Cloudflare's proxy (orange cloud) is fine and is what production uses: Cloudflare
+   terminates TLS at the edge. If instead you want Traefik to issue its own Let's Encrypt
+   certificate, the record must be **DNS only** (grey cloud) for the HTTP-01 challenge to
+   reach it.
+
+   `www` currently has no record at all, so `www.benjaminrutter.com` does not resolve. Add a
+   `CNAME www -> benjaminrutter.com` (or an A record to the same target) and add the hostname
+   in Dokploy's Domains tab, or leave it and accept that only the apex works.
 5. Deploy. Migrations run on start and create the schema in the empty database.
 6. Visit `/admin` and create the admin user. **Do this promptly** — the first-user route is
    open until someone claims it.
