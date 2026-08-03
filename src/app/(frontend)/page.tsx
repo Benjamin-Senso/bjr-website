@@ -3,7 +3,8 @@ import { Hero } from './components/Hero'
 import { Socials } from './components/Socials'
 import { SectionPanel } from './components/SectionPanel'
 import { PageShell } from './components/PageShell'
-import { getGlobal } from './lib/content'
+import { WorkPreview } from './components/WorkPreview'
+import { getGlobal, getWorkItems } from './lib/content'
 import { buildMetadata } from './lib/metadata'
 
 // Rendered per request so the build never needs a database; the reads
@@ -16,9 +17,16 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const [home, settings] = await Promise.all([getGlobal('home'), getGlobal('site-settings')])
+  const [home, settings, workItems] = await Promise.all([
+    getGlobal('home'),
+    getGlobal('site-settings'),
+    getWorkItems(),
+  ])
 
   const links = home.links ?? []
+  // Two is enough to prove there is work behind the claim without turning the
+  // home page into a second /work.
+  const previewItems = workItems.slice(0, 2)
 
   return (
     <PageShell width="home">
@@ -31,6 +39,8 @@ export default async function HomePage() {
       ) : null}
 
       <Socials socials={settings.socials} />
+
+      <WorkPreview items={previewItems} />
 
       {links.length ? (
         <section className="mt-10 grid w-full grid-cols-1 gap-4">
