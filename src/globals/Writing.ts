@@ -75,7 +75,11 @@ export const Writing: GlobalConfig = {
             },
           ],
         },
-        seoTab('Writing'),
+        seoTab(
+          'Writing',
+          'Occasional notes from Benjamin Rutter on building brands, and the businesses behind them.',
+          'Benjamin Rutter writing, brand notes, founder newsletter',
+        ),
       ],
     },
   ],

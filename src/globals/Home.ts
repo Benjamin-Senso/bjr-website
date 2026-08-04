@@ -121,7 +121,11 @@ export const Home: GlobalConfig = {
             },
           ],
         },
-        seoTab('Benjamin Rutter'),
+        seoTab(
+          'Benjamin Rutter',
+          'Benjamin Rutter builds brands and the businesses behind them. Founder of Senso Studio, working with internet-first companies across the UK, EU and MENA.',
+          'Benjamin Rutter, Senso Studio, brand studio, founder, brand and product, UK, UAE',
+        ),
       ],
     },
   ],

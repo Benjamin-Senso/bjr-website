@@ -91,7 +91,11 @@ export const Contact: GlobalConfig = {
             },
           ],
         },
-        seoTab('Contact'),
+        seoTab(
+          'Contact',
+          'Get in touch about brand and product work, advisory and consulting, or a venture you want a partner on.',
+          'contact Benjamin Rutter, brand consultancy, advisory, Senso Studio enquiries',
+        ),
       ],
     },
   ],

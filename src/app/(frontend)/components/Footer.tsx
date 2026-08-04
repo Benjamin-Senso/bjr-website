@@ -1,7 +1,14 @@
+import Link from 'next/link'
+
 export function Footer({ text }: { text?: string | null }) {
   return (
     <footer className="site-footer text-muted relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center gap-4 px-6 text-sm sm:flex-row sm:justify-between">
-      <p>{text}</p>
+      <div className="flex items-center gap-4">
+        <p>{text}</p>
+        <Link href="/privacy" className="hover:text-foreground hover-tint">
+          Privacy
+        </Link>
+      </div>
 
       <a
         href="https://sensostudio.co"

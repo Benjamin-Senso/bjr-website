@@ -98,6 +98,7 @@ export interface Config {
     work: Work;
     writing: Writing;
     contact: Contact;
+    privacy: Privacy;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -106,6 +107,7 @@ export interface Config {
     work: WorkSelect<false> | WorkSelect<true>;
     writing: WritingSelect<false> | WritingSelect<true>;
     contact: ContactSelect<false> | ContactSelect<true>;
+    privacy: PrivacySelect<false> | PrivacySelect<true>;
   };
   locale: null;
   widgets: {
@@ -827,6 +829,54 @@ export interface Contact {
   createdAt?: string | null;
 }
 /**
+ * The /privacy page, linked from the footer and the cookie banner.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "privacy".
+ */
+export interface Privacy {
+  id: number;
+  heading: string;
+  intro?: string | null;
+  /**
+   * Shown under the intro. Update whenever the notice changes.
+   */
+  lastUpdated?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Browser tab title and search/social title for this page.
+   */
+  metaTitle?: string | null;
+  /**
+   * Short summary for search engines and link previews. Aim for 150-160 characters.
+   */
+  metaDescription?: string | null;
+  /**
+   * Comma separated. Falls back to the site-wide list. Note that Google ignores the keywords meta tag; this mainly helps other crawlers and keeps the intended terms on record.
+   */
+  keywords?: string | null;
+  /**
+   * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
+   */
+  ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -977,6 +1027,23 @@ export interface ContactSelect<T extends boolean = true> {
   email?: T;
   availability?: T;
   showSocials?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  keywords?: T;
+  ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "privacy_select".
+ */
+export interface PrivacySelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  lastUpdated?: T;
+  body?: T;
   metaTitle?: T;
   metaDescription?: T;
   keywords?: T;

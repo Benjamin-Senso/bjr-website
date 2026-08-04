@@ -17,6 +17,7 @@ import { About } from './globals/About'
 import { Work } from './globals/Work'
 import { Writing } from './globals/Writing'
 import { Contact } from './globals/Contact'
+import { Privacy } from './globals/Privacy'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -32,7 +33,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, WorkItems, ContactSubmissions],
-  globals: [SiteSettings, Home, About, Work, Writing, Contact],
+  globals: [SiteSettings, Home, About, Work, Writing, Contact, Privacy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -4,6 +4,8 @@ import { Socials } from './components/Socials'
 import { SectionPanel } from './components/SectionPanel'
 import { PageShell } from './components/PageShell'
 import { WorkPreview } from './components/WorkPreview'
+import { JsonLd } from './components/JsonLd'
+import { profilePageSchema } from './lib/schema'
 import { getGlobal, getWorkItems } from './lib/content'
 import { buildMetadata } from './lib/metadata'
 
@@ -30,6 +32,8 @@ export default async function HomePage() {
 
   return (
     <PageShell width="home">
+      <JsonLd data={profilePageSchema(settings)} />
+
       <Hero name={settings.name} bio={home.bio} profileImage={settings.profileImage} />
 
       {home.statement ? (

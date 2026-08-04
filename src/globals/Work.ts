@@ -154,7 +154,11 @@ export const Work: GlobalConfig = {
             },
           ],
         },
-        seoTab('Work'),
+        seoTab(
+          'Work',
+          'Senso Studio, the ventures around it, and advisory work with founders and operators. Brand, product and the operational systems underneath.',
+          'Benjamin Rutter work, Senso Studio, Signet, ventures, brand and product, advisory',
+        ),
       ],
     },
   ],

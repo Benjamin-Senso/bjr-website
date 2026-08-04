@@ -113,7 +113,11 @@ export const About: GlobalConfig = {
             },
           ],
         },
-        seoTab('About'),
+        seoTab(
+          'About',
+          'How Benjamin Rutter got from picking up design tools at eight to running a brand, product and venture studio across two jurisdictions.',
+          'Benjamin Rutter about, brand designer, operator, founder story, Senso Studio',
+        ),
       ],
     },
   ],

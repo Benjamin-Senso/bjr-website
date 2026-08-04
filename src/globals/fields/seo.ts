@@ -4,7 +4,11 @@ import type { Tab } from 'payload'
  * Per-page SEO tab. Every page global gets one so titles, keywords and share
  * images can differ per route; anything left blank falls back to Site Settings.
  */
-export const seoTab = (defaultTitle: string): Tab => ({
+export const seoTab = (
+  defaultTitle: string,
+  defaultDescription?: string,
+  defaultKeywords?: string,
+): Tab => ({
   label: 'SEO',
   fields: [
     {
@@ -20,6 +24,7 @@ export const seoTab = (defaultTitle: string): Tab => ({
       name: 'metaDescription',
       type: 'textarea',
       label: 'Meta Description',
+      defaultValue: defaultDescription,
       admin: {
         description: 'Short summary for search engines and link previews. Aim for 150-160 characters.',
       },
@@ -28,6 +33,7 @@ export const seoTab = (defaultTitle: string): Tab => ({
       name: 'keywords',
       type: 'text',
       label: 'Keywords',
+      defaultValue: defaultKeywords,
       admin: {
         description:
           'Comma separated. Falls back to the site-wide list. Note that Google ignores the keywords meta tag; this mainly helps other crawlers and keeps the intended terms on record.',

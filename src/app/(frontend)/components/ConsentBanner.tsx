@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { CONSENT_KEY } from './ConsentDefaults'
 
@@ -69,7 +70,11 @@ export function ConsentBanner() {
       <div className="liquid-glass mb-4 flex w-full max-w-2xl flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-muted text-sm leading-relaxed">
           I use analytics cookies to understand how the site is used. Nothing is set unless you
-          accept.
+          accept.{' '}
+          <Link href="/privacy" className="text-accent hover:text-accent-hover underline">
+            How I handle data
+          </Link>
+          .
         </p>
 
         <div className="flex shrink-0 gap-2">

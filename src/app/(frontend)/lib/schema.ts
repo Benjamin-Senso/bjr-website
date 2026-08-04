@@ -27,8 +27,40 @@ export function personSchema(settings: SiteSetting) {
     name: settings.name,
     url: siteUrl(),
     ...(settings.jobTitle ? { jobTitle: settings.jobTitle } : {}),
+    ...(settings.metaDescription ? { description: settings.metaDescription } : {}),
     ...(avatar ? { image: avatar.url } : {}),
+    // sameAs is how a search engine ties this page to your social profiles and
+    // treats them as the same entity rather than unrelated accounts.
     ...(socials.length ? { sameAs: socials } : {}),
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Senso Studio',
+      url: 'https://sensostudio.co',
+    },
+    knowsAbout: [
+      'Brand strategy',
+      'Brand identity',
+      'Product design',
+      'Venture building',
+      'Business operations',
+    ],
+  }
+}
+
+/**
+ * Marks the home page as a profile about the site owner. Google treats
+ * ProfilePage as a distinct type for creator and author pages, and it is the
+ * accurate description of what the landing page is.
+ */
+export function profilePageSchema(settings: SiteSetting) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    '@id': `${siteUrl()}/#profile`,
+    url: siteUrl(),
+    name: settings.name,
+    isPartOf: { '@id': websiteId() },
+    mainEntity: { '@id': personId() },
   }
 }
 
