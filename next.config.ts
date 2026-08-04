@@ -24,7 +24,31 @@ if (r2PublicUrl) {
   }
 }
 
+/**
+ * Baseline security headers. None were set, so the admin panel could be framed
+ * by any site (clickjacking against a logged-in session) and browsers were
+ * free to sniff content types.
+ *
+ * Deliberately no Content-Security-Policy yet: Payload's admin and GTM both
+ * need script-src rules that are easy to get wrong, and a broken CSP breaks the
+ * site silently. Worth adding as its own piece of work.
+ */
+const securityHeaders = [
+  // Only meaningful over HTTPS, which production is. Two years, and safe to
+  // preload later once you are confident every subdomain is HTTPS.
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  // Nothing here needs these, and denying them stops a third-party script
+  // asking on your behalf.
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' },
+]
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{ source: '/:path*', headers: securityHeaders }]
+  },
   images: {
     localPatterns: [
       {
