@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await getArticles()
   if (articles.length) {
     entries.push({
-      url: `${base}/writing`,
+      url: `${base}/journal`,
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const article of articles) {
     if (!article.slug) continue
     entries.push({
-      url: `${base}/writing/${article.slug}`,
+      url: `${base}/journal/${article.slug}`,
       lastModified: article.updatedAt ? new Date(article.updatedAt) : lastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
@@ -54,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (!articles.length && isBeehiivConfigured()) {
     entries.push({
-      url: `${base}/writing`,
+      url: `${base}/journal`,
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.6,

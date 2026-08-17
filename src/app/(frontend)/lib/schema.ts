@@ -139,7 +139,7 @@ export function workCollectionSchema(items: WorkItem[], heading: string, descrip
 /** A written piece, authored by the site owner. */
 export function articleSchema(article: Article) {
   const cover = resolveMedia(article.coverImage)
-  const url = `${siteUrl()}/writing/${article.slug}`
+  const url = `${siteUrl()}/journal/${article.slug}`
 
   return {
     '@context': 'https://schema.org',
@@ -160,12 +160,12 @@ export function articleSchema(article: Article) {
 }
 
 /** The /writing index, as a list of the posts on it. */
-export function writingCollectionSchema(articles: Article[], heading: string, description?: string) {
+export function journalCollectionSchema(articles: Article[], heading: string, description?: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `${siteUrl()}/writing#collection`,
-    url: `${siteUrl()}/writing`,
+    '@id': `${siteUrl()}/journal#collection`,
+    url: `${siteUrl()}/journal`,
     name: heading,
     ...(description ? { description } : {}),
     isPartOf: { '@id': websiteId() },
@@ -176,7 +176,7 @@ export function writingCollectionSchema(articles: Article[], heading: string, de
         '@type': 'ListItem',
         position: i + 1,
         name: article.title,
-        url: `${siteUrl()}/writing/${article.slug}`,
+        url: `${siteUrl()}/journal/${article.slug}`,
       })),
     },
   }

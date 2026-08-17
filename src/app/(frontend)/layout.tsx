@@ -50,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     { href: '/work', label: 'Work' },
     { href: '/about', label: 'About' },
     // Writing appears once there is something to read, from either source.
-    ...(articles.length || isBeehiivConfigured() ? [{ href: '/writing', label: 'Writing' }] : []),
+    ...(articles.length || isBeehiivConfigured() ? [{ href: '/journal', label: 'Journal' }] : []),
   ]
 
   // Read at request time rather than baked in at build: a plain env var keeps

@@ -18,7 +18,7 @@ type Params = { params: Promise<{ slug: string }> }
 export async function generateMetadata({ params }: Params) {
   const { slug } = await params
   const article = await getArticle(slug)
-  if (!article) return buildMetadata({}, 'Not found', `/writing/${slug}`)
+  if (!article) return buildMetadata({}, 'Not found', `/journal/${slug}`)
 
   const metadata = await buildMetadata(
     {
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Params) {
       ogImage: article.coverImage,
     },
     article.title,
-    `/writing/${slug}`,
+    `/journal/${slug}`,
   )
 
   // Only when the piece was first published elsewhere. Normally this site is
@@ -56,17 +56,17 @@ export default async function ArticlePage({ params }: Params) {
           articleSchema(article),
           breadcrumbSchema([
             { name: 'Home', path: '/' },
-            { name: 'Writing', path: '/writing' },
-            { name: article.title, path: `/writing/${article.slug}` },
+            { name: 'Journal', path: '/journal' },
+            { name: article.title, path: `/journal/${article.slug}` },
           ]),
         ]}
       />
 
       <Link
-        href="/writing"
+        href="/journal"
         className="text-muted hover:text-foreground hover-tint mb-8 inline-flex items-center gap-1.5 self-start text-sm"
       >
-        <span aria-hidden="true">←</span> Back to writing
+        <span aria-hidden="true">←</span> Back to the journal
       </Link>
 
       <header className="mb-8">

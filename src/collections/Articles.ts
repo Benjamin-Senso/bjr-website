@@ -9,7 +9,7 @@ const slugify = (value: string) =>
     .replace(/^-+|-+$/g, '')
 
 /**
- * Articles published at /writing/<slug>.
+ * Articles published at /journal/<slug>.
  *
  * These live on this domain deliberately. Publishing primarily to Medium or a
  * newsletter hands the search value to their domain; writing here first and
@@ -20,7 +20,7 @@ const slugify = (value: string) =>
  */
 export const Articles: CollectionConfig = {
   slug: 'articles',
-  labels: { singular: 'Article', plural: 'Writing' },
+  labels: { singular: 'Article', plural: 'Journal' },
   access: {
     // Anonymous readers only ever see published posts. Logged-in editors see
     // everything, which is what makes previewing a draft possible.
@@ -36,7 +36,7 @@ export const Articles: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'status', 'publishedAt'],
-    description: 'Articles published at /writing. Drafts are not visible to the public.',
+    description: 'Articles published at /journal. Drafts are not visible to the public.',
   },
   defaultSort: '-publishedAt',
   fields: [
@@ -105,7 +105,7 @@ export const Articles: CollectionConfig = {
       index: true,
       admin: {
         position: 'sidebar',
-        description: 'The URL, e.g. /writing/what-a-rebrand-costs. Generated from the title.',
+        description: 'The URL, e.g. /journal/what-a-rebrand-costs. Generated from the title.',
       },
       hooks: {
         beforeValidate: [

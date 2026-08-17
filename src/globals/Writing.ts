@@ -9,7 +9,7 @@ import { seoTab } from './fields/seo'
  */
 export const Writing: GlobalConfig = {
   slug: 'writing',
-  label: 'Writing Page',
+  label: 'Journal Page',
   access: {
     read: () => true,
   },
@@ -17,7 +17,7 @@ export const Writing: GlobalConfig = {
     afterChange: [revalidateGlobal('writing')],
   },
   admin: {
-    description: 'The /writing page. Posts are pulled automatically from beehiiv.',
+    description: 'The /journal page. Your articles, plus beehiiv posts if connected.',
   },
   fields: [
     {
@@ -30,7 +30,7 @@ export const Writing: GlobalConfig = {
               name: 'heading',
               type: 'text',
               required: true,
-              defaultValue: 'Writing',
+              defaultValue: 'Journal',
             },
             {
               name: 'intro',
@@ -76,7 +76,7 @@ export const Writing: GlobalConfig = {
           ],
         },
         seoTab(
-          'Writing',
+          'Journal',
           'Occasional notes from Benjamin Rutter on building brands, and the businesses behind them.',
           'Benjamin Rutter writing, brand notes, founder newsletter',
         ),

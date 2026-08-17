@@ -14,7 +14,8 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
-    "seed:work": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seedWork.ts"
+    "seed:work": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seedWork.ts",
+    "seed:journal": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/seedJournal.ts"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.12",

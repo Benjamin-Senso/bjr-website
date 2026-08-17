@@ -263,7 +263,7 @@ export interface WorkItem {
   createdAt: string;
 }
 /**
- * Articles published at /writing. Drafts are not visible to the public.
+ * Articles published at /journal. Drafts are not visible to the public.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "articles".
@@ -303,7 +303,7 @@ export interface Article {
    */
   publishedAt?: string | null;
   /**
-   * The URL, e.g. /writing/what-a-rebrand-costs. Generated from the title.
+   * The URL, e.g. /journal/what-a-rebrand-costs. Generated from the title.
    */
   slug?: string | null;
   /**
@@ -813,7 +813,7 @@ export interface Work {
   createdAt?: string | null;
 }
 /**
- * The /writing page. Posts are pulled automatically from beehiiv.
+ * The /journal page. Your articles, plus beehiiv posts if connected.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "writing".

@@ -10,7 +10,7 @@ export function ArticleCard({ article }: { article: Article }) {
 
   return (
     <Link
-      href={`/writing/${article.slug}`}
+      href={`/journal/${article.slug}`}
       className="liquid-glass hover-lift group flex flex-col overflow-hidden rounded-2xl"
     >
       {cover ? (

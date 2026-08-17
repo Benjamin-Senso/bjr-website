@@ -7,34 +7,34 @@ import { JsonLd } from '../components/JsonLd'
 import { getPosts, isBeehiivConfigured } from '@/lib/beehiiv'
 import { getGlobal, getArticles } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
-import { breadcrumbSchema, writingCollectionSchema } from '../lib/schema'
+import { breadcrumbSchema, journalCollectionSchema } from '../lib/schema'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata() {
-  const writing = await getGlobal('writing')
-  return buildMetadata(writing, 'Writing', '/writing')
+  const journal = await getGlobal('writing')
+  return buildMetadata(journal, 'Journal', '/journal')
 }
 
 export default async function WritingPage() {
-  const [writing, articles] = await Promise.all([getGlobal('writing'), getArticles()])
+  const [journal, articles] = await Promise.all([getGlobal('writing'), getArticles()])
   // Newsletter issues live on beehiiv's domain, so they sit below the pieces
   // written here rather than competing with them.
-  const posts = await getPosts(writing.postLimit ?? 10)
+  const posts = await getPosts(journal.postLimit ?? 10)
 
   return (
     <PageShell>
       <JsonLd
         data={[
-          writingCollectionSchema(articles, writing.heading, writing.intro ?? undefined),
+          journalCollectionSchema(articles, journal.heading, journal.intro ?? undefined),
           breadcrumbSchema([
             { name: 'Home', path: '/' },
-            { name: writing.heading, path: '/writing' },
+            { name: journal.heading, path: '/journal' },
           ]),
         ]}
       />
 
-      <PageHeader heading={writing.heading} intro={writing.intro} />
+      <PageHeader heading={journal.heading} intro={journal.intro} />
 
       {articles.length ? (
         <div className="flex flex-col gap-4">
@@ -59,8 +59,8 @@ export default async function WritingPage() {
         </section>
       ) : null}
 
-      {writing.showSubscribe && isBeehiivConfigured() ? (
-        <SubscribeForm heading={writing.subscribeHeading} blurb={writing.subscribeBlurb} />
+      {journal.showSubscribe && isBeehiivConfigured() ? (
+        <SubscribeForm heading={journal.subscribeHeading} blurb={journal.subscribeBlurb} />
       ) : null}
     </PageShell>
   )
