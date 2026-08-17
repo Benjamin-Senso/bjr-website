@@ -23,3 +23,7 @@ export const revalidateGlobal = (slug: string) => async () => {
 export const revalidateWorkItems = async () => {
   await revalidate('collection:work-items')
 }
+
+export const revalidateArticles = async () => {
+  await revalidate('collection:articles')
+}

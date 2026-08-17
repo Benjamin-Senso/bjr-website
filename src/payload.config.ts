@@ -9,6 +9,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { WorkItems } from './collections/WorkItems'
 import { ContactSubmissions } from './collections/ContactSubmissions'
+import { Articles } from './collections/Articles'
 import { r2Storage } from './lib/storage'
 import { buildEmailAdapter } from './lib/email'
 import { SiteSettings } from './globals/SiteSettings'
@@ -32,7 +33,7 @@ export default buildConfig({
       titleSuffix: '— BJR',
     },
   },
-  collections: [Users, Media, WorkItems, ContactSubmissions],
+  collections: [Users, Media, WorkItems, Articles, ContactSubmissions],
   globals: [SiteSettings, Home, About, Work, Writing, Contact, Privacy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

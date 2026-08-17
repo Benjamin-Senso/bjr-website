@@ -10,7 +10,7 @@ import { JsonLd } from './components/JsonLd'
 import { ConsentDefaults } from './components/ConsentDefaults'
 import { ConsentBanner } from './components/ConsentBanner'
 import { GoogleTagManager } from '@next/third-parties/google'
-import { getGlobal } from './lib/content'
+import { getArticles, getGlobal } from './lib/content'
 import { personSchema, websiteSchema } from './lib/schema'
 import { isBeehiivConfigured } from '@/lib/beehiiv'
 
@@ -42,15 +42,15 @@ export const viewport: Viewport = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getGlobal('site-settings')
+  const [settings, articles] = await Promise.all([getGlobal('site-settings'), getArticles()])
 
   // Work before About: the studio is the proof, the story comes second.
   const routes: NavRoute[] = [
     { href: '/', label: 'Home' },
     { href: '/work', label: 'Work' },
     { href: '/about', label: 'About' },
-    // Writing only appears once the newsletter is actually connected.
-    ...(isBeehiivConfigured() ? [{ href: '/writing', label: 'Writing' }] : []),
+    // Writing appears once there is something to read, from either source.
+    ...(articles.length || isBeehiivConfigured() ? [{ href: '/writing', label: 'Writing' }] : []),
   ]
 
   // Read at request time rather than baked in at build: a plain env var keeps

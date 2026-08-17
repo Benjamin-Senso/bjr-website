@@ -1,4 +1,4 @@
-import type { SiteSetting, WorkItem } from '@/payload-types'
+import type { Article, SiteSetting, WorkItem } from '@/payload-types'
 import { resolveMedia } from './media'
 import { siteUrl } from './metadata'
 
@@ -131,6 +131,52 @@ export function workCollectionSchema(items: WorkItem[], heading: string, descrip
         position: i + 1,
         name: item.name,
         url: `${siteUrl()}/work/${item.slug}`,
+      })),
+    },
+  }
+}
+
+/** A written piece, authored by the site owner. */
+export function articleSchema(article: Article) {
+  const cover = resolveMedia(article.coverImage)
+  const url = `${siteUrl()}/writing/${article.slug}`
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    headline: article.title,
+    description: article.excerpt,
+    ...(cover ? { image: cover.url } : {}),
+    url,
+    mainEntityOfPage: article.canonicalUrl || url,
+    author: { '@id': personId() },
+    publisher: { '@id': personId() },
+    isPartOf: { '@id': websiteId() },
+    ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
+    ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
+    inLanguage: 'en-GB',
+  }
+}
+
+/** The /writing index, as a list of the posts on it. */
+export function writingCollectionSchema(articles: Article[], heading: string, description?: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${siteUrl()}/writing#collection`,
+    url: `${siteUrl()}/writing`,
+    name: heading,
+    ...(description ? { description } : {}),
+    isPartOf: { '@id': websiteId() },
+    about: { '@id': personId() },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: articles.map((article, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: article.title,
+        url: `${siteUrl()}/writing/${article.slug}`,
       })),
     },
   }

@@ -7,6 +7,7 @@ type GlobalSlug = keyof Config['globals']
 
 export const globalTag = (slug: string) => `global:${slug}`
 export const WORK_ITEMS_TAG = 'collection:work-items'
+export const ARTICLES_TAG = 'collection:articles'
 
 /**
  * Routes stay dynamic so `next build` never needs a database (the Docker image
@@ -39,6 +40,44 @@ export function getWorkItem(slug: string) {
     },
     ['work-item', slug],
     { tags: [WORK_ITEMS_TAG], revalidate: 300 },
+  )()
+}
+
+/**
+ * Published articles only. The collection's access control already hides
+ * drafts from anonymous readers, but filtering here too means a draft can
+ * never appear through the cached path either.
+ */
+export const getArticles = unstable_cache(
+  async () => {
+    const payload = await getPayload({ config: payloadConfig })
+    const result = await payload.find({
+      collection: 'articles',
+      where: { status: { equals: 'published' } },
+      limit: 100,
+      sort: '-publishedAt',
+      depth: 2,
+    })
+    return result.docs
+  },
+  ['articles'],
+  { tags: [ARTICLES_TAG], revalidate: 300 },
+)
+
+export function getArticle(slug: string) {
+  return unstable_cache(
+    async () => {
+      const payload = await getPayload({ config: payloadConfig })
+      const result = await payload.find({
+        collection: 'articles',
+        where: { slug: { equals: slug }, status: { equals: 'published' } },
+        limit: 1,
+        depth: 2,
+      })
+      return result.docs[0] ?? null
+    },
+    ['article', slug],
+    { tags: [ARTICLES_TAG], revalidate: 300 },
   )()
 }
 

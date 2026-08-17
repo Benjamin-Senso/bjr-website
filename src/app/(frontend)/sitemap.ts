@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getWorkItems } from './lib/content'
+import { getArticles, getWorkItems } from './lib/content'
 import { siteUrl } from './lib/metadata'
 import { isBeehiivConfigured } from '@/lib/beehiiv'
 
@@ -33,7 +33,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  if (isBeehiivConfigured()) {
+  const articles = await getArticles()
+  if (articles.length) {
+    entries.push({
+      url: `${base}/writing`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    })
+  }
+  for (const article of articles) {
+    if (!article.slug) continue
+    entries.push({
+      url: `${base}/writing/${article.slug}`,
+      lastModified: article.updatedAt ? new Date(article.updatedAt) : lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    })
+  }
+
+  if (!articles.length && isBeehiivConfigured()) {
     entries.push({
       url: `${base}/writing`,
       lastModified,

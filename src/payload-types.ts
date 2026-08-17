@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     'work-items': WorkItem;
+    articles: Article;
     'contact-submissions': ContactSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -81,6 +82,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'work-items': WorkItemsSelect<false> | WorkItemsSelect<true>;
+    articles: ArticlesSelect<false> | ArticlesSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -261,6 +263,57 @@ export interface WorkItem {
   createdAt: string;
 }
 /**
+ * Articles published at /writing. Drafts are not visible to the public.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
+  id: number;
+  title: string;
+  /**
+   * One or two sentences. Shown on the index, and used as the search and social description.
+   */
+  excerpt: string;
+  /**
+   * Shown on the card and at the top of the article. Landscape (16:9).
+   */
+  coverImage?: (number | null) | Media;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Drafts are hidden from the site, the API and the sitemap.
+   */
+  status: 'draft' | 'published';
+  /**
+   * Sets the order on the index. Defaults to now when first published.
+   */
+  publishedAt?: string | null;
+  /**
+   * The URL, e.g. /writing/what-a-rebrand-costs. Generated from the title.
+   */
+  slug?: string | null;
+  /**
+   * Leave blank. Only set this if the piece was originally published elsewhere and that copy should be treated as the original.
+   */
+  canonicalUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Messages sent through the contact form.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -311,6 +364,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'work-items';
         value: number | WorkItem;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
       } | null)
     | ({
         relationTo: 'contact-submissions';
@@ -421,6 +478,22 @@ export interface WorkItemsSelect<T extends boolean = true> {
   year?: T;
   status?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles_select".
+ */
+export interface ArticlesSelect<T extends boolean = true> {
+  title?: T;
+  excerpt?: T;
+  coverImage?: T;
+  body?: T;
+  status?: T;
+  publishedAt?: T;
+  slug?: T;
+  canonicalUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }
