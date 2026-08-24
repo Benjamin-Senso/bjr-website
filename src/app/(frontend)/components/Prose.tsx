@@ -17,7 +17,10 @@ export function Prose({ children }: { children: React.ReactNode }) {
     <div className="liquid-glass rounded-2xl p-6 sm:p-8">
       <div
         className={[
-          'text-foreground/90 leading-relaxed',
+          // The panel is wide, the reading column is not. Past roughly 70
+          // characters the eye loses its place returning to the next line, so
+          // the text is capped and centred rather than filling the panel.
+          'text-foreground/90 mx-auto max-w-[68ch] leading-relaxed',
           // Paragraphs
           '[&_p+p]:mt-4',
           // Headings

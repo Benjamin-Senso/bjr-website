@@ -58,13 +58,17 @@ export async function buildMetadata(
       siteName: settings?.name || 'Benjamin Rutter',
       locale: 'en_GB',
       type: 'website',
-      images: image ? [{ url: image, width: 1200, height: 630 }] : undefined,
+      // The `images` key is omitted entirely when there is no image, rather
+      // than set to undefined. Present-but-undefined still suppresses Next's
+      // file-based opengraph-image convention, which is what generates the
+      // article share cards.
+      ...(image ? { images: [{ url: image, width: 1200, height: 630 }] } : {}),
     },
     twitter: {
-      card: image ? 'summary_large_image' : 'summary',
+      card: 'summary_large_image',
       title,
       description,
-      images: image ? [image] : undefined,
+      ...(image ? { images: [image] } : {}),
     },
     robots: {
       index: true,

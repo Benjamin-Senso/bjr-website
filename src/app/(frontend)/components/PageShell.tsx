@@ -15,10 +15,10 @@ export function PageShell({
     width === 'narrow'
       ? 'max-w-md items-center'
       : width === 'home'
-        ? 'max-w-lg items-center' // hero stays centred, panels get a little more room
-      : width === 'grid'
-        ? 'max-w-4xl' // room for a two-column panel grid
-        : 'max-w-2xl'
+        ? 'max-w-xl items-center' // hero stays centred, panels get room
+        : width === 'grid'
+          ? 'max-w-5xl' // two-column panel grid, comfortable on a laptop
+          : 'max-w-3xl'
 
   return (
     <main

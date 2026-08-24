@@ -13,8 +13,8 @@ export function ArticleCard({ article }: { article: Article }) {
       href={`/journal/${article.slug}`}
       className="liquid-glass hover-lift group flex flex-col overflow-hidden rounded-2xl"
     >
-      {cover ? (
-        <div className="relative aspect-[16/9] w-full overflow-hidden">
+      <div className="relative aspect-[16/9] w-full overflow-hidden">
+        {cover ? (
           <Image
             src={cover.url}
             alt={cover.alt || article.title}
@@ -22,8 +22,12 @@ export function ArticleCard({ article }: { article: Article }) {
             sizes="(min-width: 640px) 672px, 100vw"
             className="hover-media object-cover"
           />
-        </div>
-      ) : null}
+        ) : (
+          // No cover uploaded: fall back to the site's own aurora rather than
+          // a blank card, so an unillustrated piece still looks deliberate.
+          <div className="article-fallback hover-media h-full w-full" aria-hidden="true" />
+        )}
+      </div>
 
       <div className="flex flex-1 flex-col p-6">
         {date ? <p className="text-muted text-xs">{date}</p> : null}

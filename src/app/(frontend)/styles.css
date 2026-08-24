@@ -303,6 +303,18 @@ a {
   }
 }
 
+/* Cover fallback for articles with no uploaded image. Same accent bloom as
+   the page backdrop, so it reads as part of the site rather than a gap. */
+.article-fallback {
+  background:
+    radial-gradient(
+      ellipse 80% 70% at 30% -10%,
+      color-mix(in srgb, var(--color-accent) 38%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(140deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01));
+}
+
 /* Links, pills and buttons: colour only, quick but still eased. */
 .hover-tint {
   transition:
