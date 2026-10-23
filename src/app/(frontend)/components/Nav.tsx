@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export type NavRoute = { href: string; label: string }
 
@@ -28,6 +28,10 @@ export function Nav({ routes, cta }: { routes: NavRoute[]; cta: NavRoute }) {
   // Suppresses the transition on first paint so the pill does not slide in
   // from the left edge on load.
   const [ready, setReady] = useState(false)
+  // Whether the page has scrolled at all. Drives the nav's opacity: over empty
+  // space it can stay glassy, but once content passes behind it the blur alone
+  // does not mask text and headlines bleed through the pill.
+  const [scrolled, setScrolled] = useState(false)
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -61,6 +65,13 @@ export function Nav({ routes, cta }: { routes: NavRoute[]; cta: NavRoute }) {
     return () => cancelAnimationFrame(id)
   }, [measure])
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   useLayoutEffect(() => {
     // Web fonts and viewport changes both shift item widths after first paint.
     const onResize = () => measure()
@@ -71,7 +82,10 @@ export function Nav({ routes, cta }: { routes: NavRoute[]; cta: NavRoute }) {
 
   return (
     <div className="nav-shell sticky z-50 flex justify-center px-4">
-      <nav aria-label="Main" className="liquid-glass rounded-full p-1.5">
+      <nav
+        aria-label="Main"
+        className={`liquid-glass nav-surface rounded-full p-1.5 ${scrolled ? 'is-scrolled' : ''}`}
+      >
         <div ref={listRef} className="relative flex items-center gap-1 sm:gap-2">
           {indicator ? (
             <span

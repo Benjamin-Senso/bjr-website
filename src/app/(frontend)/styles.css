@@ -280,6 +280,26 @@ a {
   }
 }
 
+/* The nav sits over the page, so once content scrolls behind it the frosted
+   glass alone is not enough: headlines read straight through the pill. Adding
+   a near-opaque base on scroll keeps it legible without losing the material. */
+.nav-surface {
+  transition:
+    background-color var(--dur-base) var(--ease-out-soft),
+    border-color var(--dur-base) var(--ease-out-soft),
+    box-shadow var(--dur-base) var(--ease-out-soft);
+}
+
+.nav-surface.is-scrolled {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)),
+    rgba(8, 7, 11, 0.86);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28);
+}
+
 /* The sliding pill behind the active nav item and work filter. Shares the
    site easing so it feels related to the card motion rather than separate. */
 .nav-indicator {
