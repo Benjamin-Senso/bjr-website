@@ -47,6 +47,32 @@ export function reportEmailTransport() {
     console.info(`[email] Notifications send via SMTP host ${process.env.SMTP_HOST}`)
     return
   }
+
+  // Half-configured is the dangerous state: the operator believes mail is set
+  // up, and the generic "nothing configured" message sends them to check the
+  // one variable they already set. Name the missing half instead.
+  if (process.env.RESEND_API_KEY && !fromAddress()) {
+    console.error(
+      '[email] RESEND_API_KEY is set but EMAIL_FROM is not, so NOTHING IS EMAILED. ' +
+        'Set EMAIL_FROM to an address on a domain verified in Resend.',
+    )
+    return
+  }
+  if (fromAddress() && !process.env.RESEND_API_KEY && !process.env.SMTP_HOST) {
+    console.error(
+      `[email] EMAIL_FROM is set to ${fromAddress()} but no RESEND_API_KEY or SMTP_HOST, ` +
+        'so NOTHING IS EMAILED.',
+    )
+    return
+  }
+  if (process.env.SMTP_HOST && !isSmtpConfigured()) {
+    const missing = (['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'] as const).filter(
+      (k) => !process.env[k],
+    )
+    console.error(`[email] SMTP is half-configured. Missing ${missing.join(', ')}.`)
+    return
+  }
+
   console.error(
     '[email] NO EMAIL TRANSPORT CONFIGURED. Contact form messages are stored in the CMS ' +
       'but nothing is emailed. Set RESEND_API_KEY and EMAIL_FROM to fix this.',
