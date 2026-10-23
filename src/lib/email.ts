@@ -30,6 +30,29 @@ export function isEmailConfigured(): boolean {
   return isResendConfigured() || isSmtpConfigured()
 }
 
+/**
+ * Says which transport is active at boot.
+ *
+ * Notification failures are deliberately silent to the visitor, which means a
+ * misconfigured mailbox looks exactly like nobody getting in touch. Printing
+ * this on start is the difference between noticing in a deploy log and
+ * noticing three months of missed enquiries.
+ */
+export function reportEmailTransport() {
+  if (isResendConfigured()) {
+    console.info(`[email] Notifications send via Resend from ${fromAddress()}`)
+    return
+  }
+  if (isSmtpConfigured()) {
+    console.info(`[email] Notifications send via SMTP host ${process.env.SMTP_HOST}`)
+    return
+  }
+  console.error(
+    '[email] NO EMAIL TRANSPORT CONFIGURED. Contact form messages are stored in the CMS ' +
+      'but nothing is emailed. Set RESEND_API_KEY and EMAIL_FROM to fix this.',
+  )
+}
+
 export function buildEmailAdapter() {
   if (isResendConfigured()) {
     return resendAdapter({

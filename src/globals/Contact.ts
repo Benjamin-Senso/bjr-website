@@ -57,6 +57,11 @@ export const Contact: GlobalConfig = {
               name: 'notifyEmail',
               type: 'email',
               label: 'Forward Messages To',
+              // The Contact global is publicly readable so the page can render
+              // without auth, which published this inbox address at
+              // /api/globals/contact for any scraper to collect. It is only
+              // ever used server-side, so readers never need it.
+              access: { read: ({ req }) => Boolean(req.user) },
               defaultValue: 'ben@sensostudio.co',
               admin: {
                 condition: (_, s) => s?.showForm !== false,

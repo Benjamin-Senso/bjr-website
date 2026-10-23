@@ -11,7 +11,7 @@ import { WorkItems } from './collections/WorkItems'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Articles } from './collections/Articles'
 import { r2Storage } from './lib/storage'
-import { buildEmailAdapter } from './lib/email'
+import { buildEmailAdapter, reportEmailTransport } from './lib/email'
 import { SiteSettings } from './globals/SiteSettings'
 import { Home } from './globals/Home'
 import { About } from './globals/About'
@@ -22,6 +22,8 @@ import { Privacy } from './globals/Privacy'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+reportEmailTransport()
 
 export default buildConfig({
   admin: {
