@@ -72,7 +72,12 @@ void main() {
   vec3 accent = vec3(0.607, 0.545, 0.784); // #9B8BC8
   vec3 col = mix(deep, accent, smoothstep(0.2, 1.0, intensity));
 
-  float alpha = intensity * fall * 0.62;
+  // The CSS backdrop underneath now carries its own light. This canvas blends
+  // with screen, so over the old pure black it was the only thing visible and
+  // could afford to be strong; over a lit backdrop the same alpha made its
+  // cloud structure read as blotchy murk rather than a soft wash. Lower, so it
+  // shimmers over the gradients instead of competing with them.
+  float alpha = intensity * fall * 0.34;
   gl_FragColor = vec4(col, alpha);
 }
 `

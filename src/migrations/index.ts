@@ -3,6 +3,7 @@ import * as migration_20260803_124148_add_contact_notify_email from './20260803_
 import * as migration_20260804_062242_add_privacy_and_seo_defaults from './20260804_062242_add_privacy_and_seo_defaults';
 import * as migration_20260817_173813_add_articles from './20260817_173813_add_articles';
 import * as migration_20261027_091631_add_newsletter from './20261027_091631_add_newsletter';
+import * as migration_20261027_093952_update_home_statement_default from './20261027_093952_update_home_statement_default';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261027_091631_add_newsletter.up,
     down: migration_20261027_091631_add_newsletter.down,
-    name: '20261027_091631_add_newsletter'
+    name: '20261027_091631_add_newsletter',
+  },
+  {
+    up: migration_20261027_093952_update_home_statement_default.up,
+    down: migration_20261027_093952_update_home_statement_default.down,
+    name: '20261027_093952_update_home_statement_default'
   },
 ];

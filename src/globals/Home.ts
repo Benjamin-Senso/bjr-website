@@ -41,7 +41,7 @@ export const Home: GlobalConfig = {
               type: 'textarea',
               label: 'Statement',
               defaultValue:
-                'I picked up Adobe at *eight* and never put it down. Since then, a lot of brands across a lot of industries. I founded [senso], a brand, product and venture studio working across the UK, EU and MENA. I am a venture partner at [quanda], and a partner behind [mandem-meetup]. An operator as much as a designer.',
+                'I picked up Adobe at *eight* and never put it down. Since then, a lot of brands across a lot of industries, from the first mark to the operating stack underneath it. I founded [senso], a brand, product and venture studio working with internet-first companies across the UK, EU and MENA. I am a venture partner at [quanda], and a partner behind [mandem-meetup]. Most brand people cannot build systems. Most ops people cannot build brand. I do *both*.',
               admin: {
                 description:
                   'The story paragraph. Wrap a word in *asterisks* to set it in the serif italic, and put a work item slug in [square-brackets] to pull in its logo, name and link. Four or five lines works.',

@@ -72,6 +72,9 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
+    /* Dither grain, blended in the rule below. */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E")
+      0 0 / 140px 140px repeat,
     radial-gradient(
       ellipse 90% 45% at 50% -5%,
       color-mix(in srgb, var(--color-accent) 11%, transparent),
@@ -83,16 +86,28 @@ body::before {
        why they read as flat cards. These two keep a little light in the
        viewport at any scroll position, low enough to leave the page black. */
       radial-gradient(
-        ellipse 75% 55% at 82% 88%,
-        color-mix(in srgb, var(--color-accent) 16%, transparent),
+        ellipse 75% 45% at 85% 92%,
+        color-mix(in srgb, var(--color-accent) 10%, transparent),
         transparent 72%
       ),
     radial-gradient(
-      ellipse 65% 50% at 6% 48%,
-      color-mix(in srgb, var(--color-accent) 11%, transparent),
+      ellipse 60% 40% at 4% 62%,
+      color-mix(in srgb, var(--color-accent) 7%, transparent),
       transparent 72%
     ),
     var(--color-background);
+}
+
+/* Dither.
+   Wide, low-contrast gradients over near-black cannot be represented in 8-bit
+   colour, so they step rather than blend and the backdrop reads as blotchy
+   banding. A fine noise layer breaks the steps up: the eye integrates the
+   grain and sees a smooth ramp. Cheap, static, and the standard fix.
+
+   Soft-light rather than a flat overlay, so the grain lifts and darkens around
+   the existing value instead of greying the black out. */
+body::before {
+  background-blend-mode: soft-light, normal, normal, normal;
 }
 
 /* Top scrim.

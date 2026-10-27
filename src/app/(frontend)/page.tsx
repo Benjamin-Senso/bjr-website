@@ -47,11 +47,13 @@ export default async function HomePage() {
         <RichLine
           text={home.statement}
           items={workItems}
-          className="text-muted mt-4 max-w-prose text-center text-[1.0625rem] leading-[1.75] text-balance"
+          className="text-foreground/90 mt-5 max-w-prose text-center text-[1.0625rem] leading-[1.8] text-balance"
         />
       ) : null}
 
       <Socials socials={settings.socials} />
+
+      <Subscribe placement="home" variant="inline" />
 
       <WorkPreview items={previewItems} />
 
@@ -62,8 +64,6 @@ export default async function HomePage() {
           ))}
         </section>
       ) : null}
-
-      <Subscribe placement="home" />
     </PageShell>
   )
 }

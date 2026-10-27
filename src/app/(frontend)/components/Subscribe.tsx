@@ -16,7 +16,13 @@ type Placement = 'home' | 'about' | 'article' | 'journal'
  * on in the CMS. The journal page always shows it, since that is the page the
  * newsletter belongs to.
  */
-export async function Subscribe({ placement }: { placement: Placement }) {
+export async function Subscribe({
+  placement,
+  variant = 'full',
+}: {
+  placement: Placement
+  variant?: 'full' | 'inline'
+}) {
   if (!isBeehiivConfigured()) return null
 
   const newsletter = await getGlobal('newsletter')
@@ -30,6 +36,23 @@ export async function Subscribe({ placement }: { placement: Placement }) {
   if (!enabled) return null
 
   const promises = newsletter.promises ?? []
+
+  // In the hero the ask has to stay out of the way of the introduction, so it
+  // is the field and one line of small print rather than the full panel.
+  if (variant === 'inline') {
+    return (
+      <section className="mt-7 w-full max-w-md [&_p]:text-center">
+        <SubscribeForm
+          buttonLabel={newsletter.buttonLabel}
+          footnote={
+            newsletter.footnote ||
+            promises.map((promise) => promise.label).join(' · ') ||
+            undefined
+          }
+        />
+      </section>
+    )
+  }
 
   return (
     <section className="liquid-glass mt-10 w-full rounded-2xl p-6 sm:p-8">
