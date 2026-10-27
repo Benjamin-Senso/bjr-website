@@ -2,9 +2,9 @@ import { PageShell } from '../components/PageShell'
 import { PageHeader } from '../components/PageHeader'
 import { ArticleCard } from '../components/ArticleCard'
 import { PostCard } from '../components/PostCard'
-import { SubscribeForm } from '../components/SubscribeForm'
+import { Subscribe } from '../components/Subscribe'
 import { JsonLd } from '../components/JsonLd'
-import { getPosts, isBeehiivConfigured } from '@/lib/beehiiv'
+import { getPosts } from '@/lib/beehiiv'
 import { getGlobal, getArticles } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
 import { breadcrumbSchema, journalCollectionSchema } from '../lib/schema'
@@ -59,9 +59,7 @@ export default async function WritingPage() {
         </section>
       ) : null}
 
-      {journal.showSubscribe && isBeehiivConfigured() ? (
-        <SubscribeForm heading={journal.subscribeHeading} blurb={journal.subscribeBlurb} />
-      ) : null}
+      {journal.showSubscribe !== false ? <Subscribe placement="journal" /> : null}
     </PageShell>
   )
 }

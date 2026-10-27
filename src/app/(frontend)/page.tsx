@@ -4,6 +4,8 @@ import { Socials } from './components/Socials'
 import { SectionPanel } from './components/SectionPanel'
 import { PageShell } from './components/PageShell'
 import { WorkPreview } from './components/WorkPreview'
+import { Subscribe } from './components/Subscribe'
+import { RichLine } from './components/RichLine'
 import { JsonLd } from './components/JsonLd'
 import { profilePageSchema } from './lib/schema'
 import { getGlobal, getWorkItems } from './lib/content'
@@ -34,12 +36,19 @@ export default async function HomePage() {
     <PageShell width="home">
       <JsonLd data={profilePageSchema(settings)} />
 
-      <Hero name={settings.name} bio={home.bio} profileImage={settings.profileImage} />
+      <Hero
+        name={settings.name}
+        bio={home.bio}
+        profileImage={settings.profileImage}
+        workItems={workItems}
+      />
 
       {home.statement ? (
-        <p className="text-muted mt-4 max-w-prose text-center leading-relaxed text-balance">
-          {home.statement}
-        </p>
+        <RichLine
+          text={home.statement}
+          items={workItems}
+          className="text-muted mt-4 max-w-prose text-center text-[1.0625rem] leading-[1.75] text-balance"
+        />
       ) : null}
 
       <Socials socials={settings.socials} />
@@ -53,6 +62,8 @@ export default async function HomePage() {
           ))}
         </section>
       ) : null}
+
+      <Subscribe placement="home" />
     </PageShell>
   )
 }

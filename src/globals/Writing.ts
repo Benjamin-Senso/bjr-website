@@ -46,23 +46,8 @@ export const Writing: GlobalConfig = {
               type: 'checkbox',
               label: 'Show subscribe form',
               defaultValue: true,
-            },
-            {
-              name: 'subscribeHeading',
-              type: 'text',
-              label: 'Subscribe Heading',
-              defaultValue: 'Subscribe to the newsletter',
               admin: {
-                condition: (_, siblingData) => Boolean(siblingData?.showSubscribe),
-              },
-            },
-            {
-              name: 'subscribeBlurb',
-              type: 'text',
-              label: 'Subscribe Blurb',
-              defaultValue: 'Occasional notes on building brands, and the businesses behind them.',
-              admin: {
-                condition: (_, siblingData) => Boolean(siblingData?.showSubscribe),
+                description: 'The copy itself is edited once under Newsletter.',
               },
             },
             {

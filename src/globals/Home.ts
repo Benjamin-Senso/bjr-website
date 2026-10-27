@@ -32,7 +32,8 @@ export const Home: GlobalConfig = {
               required: true,
               defaultValue: 'I build brands, and the businesses behind them.',
               admin: {
-                description: 'The one line under your name. Lead with the intersection.',
+                description:
+                  'The one line under your name. Lead with the intersection. *Asterisks* set a word in the serif italic.',
               },
             },
             {
@@ -40,9 +41,10 @@ export const Home: GlobalConfig = {
               type: 'textarea',
               label: 'Statement',
               defaultValue:
-                'Founder of Senso Studio, a brand, product and venture studio working with internet-first companies across the UK, EU and MENA. An operator as much as a designer.',
+                'I picked up Adobe at *eight* and never put it down. Since then, a lot of brands across a lot of industries. I founded [senso], a brand, product and venture studio working across the UK, EU and MENA. I am a venture partner at [quanda], and a partner behind [mandem-meetup]. An operator as much as a designer.',
               admin: {
-                description: 'A short paragraph under the intro. Keep it to two or three lines.',
+                description:
+                  'The story paragraph. Wrap a word in *asterisks* to set it in the serif italic, and put a work item slug in [square-brackets] to pull in its logo, name and link. Four or five lines works.',
               },
             },
             {

@@ -3,6 +3,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { PageShell } from '../components/PageShell'
 import { PageHeader } from '../components/PageHeader'
 import { Prose } from '../components/Prose'
+import { Subscribe } from '../components/Subscribe'
 import { resolveMedia } from '../lib/media'
 import { getGlobal } from '../lib/content'
 import { buildMetadata } from '../lib/metadata'
@@ -79,6 +80,8 @@ export default async function AboutPage() {
           ))}
         </dl>
       ) : null}
+
+      <Subscribe placement="about" />
     </PageShell>
   )
 }

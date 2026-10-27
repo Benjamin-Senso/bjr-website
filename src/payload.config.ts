@@ -17,6 +17,7 @@ import { Home } from './globals/Home'
 import { About } from './globals/About'
 import { Work } from './globals/Work'
 import { Writing } from './globals/Writing'
+import { Newsletter } from './globals/Newsletter'
 import { Contact } from './globals/Contact'
 import { Privacy } from './globals/Privacy'
 
@@ -36,7 +37,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, WorkItems, Articles, ContactSubmissions],
-  globals: [SiteSettings, Home, About, Work, Writing, Contact, Privacy],
+  globals: [SiteSettings, Home, About, Work, Writing, Newsletter, Contact, Privacy],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

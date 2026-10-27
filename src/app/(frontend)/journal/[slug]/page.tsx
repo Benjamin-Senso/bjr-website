@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import { PageShell } from '../../components/PageShell'
 import { Prose } from '../../components/Prose'
+import { Subscribe } from '../../components/Subscribe'
 import { JsonLd } from '../../components/JsonLd'
 import { getArticle } from '../../lib/content'
 import { resolveMedia } from '../../lib/media'
@@ -93,6 +94,10 @@ export default async function ArticlePage({ params }: Params) {
       <Prose>
         <RichText data={article.body} />
       </Prose>
+
+      {/* The end of a piece somebody has just read is the highest-intent
+          moment on the site, so the ask belongs here rather than at the top. */}
+      <Subscribe placement="article" />
     </PageShell>
   )
 }

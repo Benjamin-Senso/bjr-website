@@ -99,6 +99,7 @@ export interface Config {
     about: About;
     work: Work;
     writing: Writing;
+    newsletter: Newsletter;
     contact: Contact;
     privacy: Privacy;
   };
@@ -108,6 +109,7 @@ export interface Config {
     about: AboutSelect<false> | AboutSelect<true>;
     work: WorkSelect<false> | WorkSelect<true>;
     writing: WritingSelect<false> | WritingSelect<true>;
+    newsletter: NewsletterSelect<false> | NewsletterSelect<true>;
     contact: ContactSelect<false> | ContactSelect<true>;
     privacy: PrivacySelect<false> | PrivacySelect<true>;
   };
@@ -625,11 +627,11 @@ export interface SiteSetting {
 export interface Home {
   id: number;
   /**
-   * The one line under your name. Lead with the intersection.
+   * The one line under your name. Lead with the intersection. *Asterisks* set a word in the serif italic.
    */
   bio: string;
   /**
-   * A short paragraph under the intro. Keep it to two or three lines.
+   * The story paragraph. Wrap a word in *asterisks* to set it in the serif italic, and put a work item slug in [square-brackets] to pull in its logo, name and link. Four or five lines works.
    */
   statement?: string | null;
   /**
@@ -825,9 +827,10 @@ export interface Writing {
    * One or two lines directly under the heading.
    */
   intro?: string | null;
+  /**
+   * The copy itself is edited once under Newsletter.
+   */
   showSubscribe?: boolean | null;
-  subscribeHeading?: string | null;
-  subscribeBlurb?: string | null;
   postLimit?: number | null;
   /**
    * Browser tab title and search/social title for this page.
@@ -845,6 +848,43 @@ export interface Writing {
    * Image shown when this page is shared (recommended 1200×630). Falls back to the site-wide one.
    */
   ogImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The email signup. Only appears once beehiiv is connected via BEEHIIV_API_KEY and BEEHIIV_PUBLICATION_ID.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter".
+ */
+export interface Newsletter {
+  id: number;
+  heading: string;
+  /**
+   * One or two lines under the heading.
+   */
+  blurb?: string | null;
+  /**
+   * Short, honest expectations shown above the email field. Three works best. Leave empty to hide them.
+   */
+  promises?:
+    | {
+        label: string;
+        detail: string;
+        id?: string | null;
+      }[]
+    | null;
+  buttonLabel?: string | null;
+  /**
+   * Optional small print under the field, e.g. "No spam, ever."
+   */
+  footnote?: string | null;
+  showOnHome?: boolean | null;
+  showOnAbout?: boolean | null;
+  /**
+   * The highest-intent moment on the site: somebody has just read to the end.
+   */
+  showAfterArticles?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1076,13 +1116,34 @@ export interface WritingSelect<T extends boolean = true> {
   heading?: T;
   intro?: T;
   showSubscribe?: T;
-  subscribeHeading?: T;
-  subscribeBlurb?: T;
   postLimit?: T;
   metaTitle?: T;
   metaDescription?: T;
   keywords?: T;
   ogImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter_select".
+ */
+export interface NewsletterSelect<T extends boolean = true> {
+  heading?: T;
+  blurb?: T;
+  promises?:
+    | T
+    | {
+        label?: T;
+        detail?: T;
+        id?: T;
+      };
+  buttonLabel?: T;
+  footnote?: T;
+  showOnHome?: T;
+  showOnAbout?: T;
+  showAfterArticles?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -52,7 +52,11 @@ body {
   position: relative;
   color: var(--color-foreground);
   font-family: var(--font-sans);
-  background-color: var(--color-background);
+  /* Deliberately no background-color here. The backdrop below is a ::before at
+     z-index -1, and a negative-z pseudo paints above the root background but
+     *below* its own element's block background, so an opaque body covered it
+     completely. html carries the black instead, which it needs anyway for the
+     iOS overscroll area. */
   /* Never let a horizontal overflow introduce a scrollbar on mobile. */
   overflow-x: hidden;
 }
@@ -72,6 +76,21 @@ body::before {
       ellipse 90% 45% at 50% -5%,
       color-mix(in srgb, var(--color-accent) 11%, transparent),
       transparent 65%
+    ),
+    /* Glass needs something behind it. The aurora and the gradient above are
+       both pinned to the top of the page, so once you scroll past the fold the
+       backdrop is pure black and every panel frosts black on black, which is
+       why they read as flat cards. These two keep a little light in the
+       viewport at any scroll position, low enough to leave the page black. */
+      radial-gradient(
+        ellipse 75% 55% at 82% 88%,
+        color-mix(in srgb, var(--color-accent) 16%, transparent),
+        transparent 72%
+      ),
+    radial-gradient(
+      ellipse 65% 50% at 6% 48%,
+      color-mix(in srgb, var(--color-accent) 11%, transparent),
+      transparent 72%
     ),
     var(--color-background);
 }
@@ -168,41 +187,44 @@ a {
  *  - Chromium also refracts the backdrop via the SVG displacement filter;
  *    Safari uses the -webkit- value (no url) and stays cleanly frosted.
  * ------------------------------------------------------------------ */
+/* Registered so the specular highlight can be transitioned. A gradient's own
+   colours are not interpolable, but a registered custom property is, and the
+   gradient re-resolves as it animates. */
+@property --glow {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0.55;
+}
+
 .liquid-glass {
   position: relative;
-  isolation: isolate;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0.03)
-  );
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  -webkit-backdrop-filter: blur(14px) saturate(180%) brightness(1.06);
-  backdrop-filter: blur(14px) saturate(180%) brightness(1.06) url(#liquid-glass);
+  /* Both layers sit above the blurred backdrop and below the content, so the
+     pointer highlight lives here rather than in a pseudo-element. The previous
+     version used ::before with z-index -1, which needed `isolation: isolate`
+     to contain it, and an isolated element is its own backdrop root: the
+     backdrop-filter below had nothing left to sample and the frosting never
+     actually rendered. */
+  background:
+    radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 0%),
+      rgba(255, 255, 255, calc(0.2 * var(--glow, 0.55))),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.045) 55%,
+      rgba(255, 255, 255, 0.085)
+    );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(20px) saturate(190%) brightness(1.12);
+  backdrop-filter: blur(20px) saturate(190%) brightness(1.12) url(#liquid-glass);
   box-shadow:
     0 10px 34px rgba(0, 0, 0, 0.42),
     inset 0 1px 1px rgba(255, 255, 255, 0.3),
     inset 0 0 0 1px rgba(255, 255, 255, 0.05),
     inset 0 -10px 26px rgba(255, 255, 255, 0.03);
-}
-
-/* Pointer-reactive specular highlight — follows the cursor across the surface.
-   Defaults to a soft top sheen (glow baseline) when not hovered. JS updates
-   --mx / --my / --glow on pointer move. */
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: radial-gradient(
-    220px circle at var(--mx, 50%) var(--my, 0%),
-    rgba(255, 255, 255, 0.22),
-    transparent 60%
-  );
-  opacity: var(--glow, 0.5);
-  transition: opacity var(--dur-base) var(--ease-out-soft);
-  pointer-events: none;
+  transition: --glow var(--dur-base) var(--ease-out-soft);
 }
 
 /* Specular edge ring (bright top-left, fading round) */

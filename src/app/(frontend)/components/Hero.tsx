@@ -1,15 +1,18 @@
 import Image from 'next/image'
-import type { SiteSetting } from '@/payload-types'
+import type { SiteSetting, WorkItem } from '@/payload-types'
 import { resolveMedia } from '../lib/media'
+import { RichLine } from './RichLine'
 
 export function Hero({
   name,
   bio,
   profileImage,
+  workItems = [],
 }: {
   name: string
   bio: string
   profileImage: SiteSetting['profileImage']
+  workItems?: WorkItem[]
 }) {
   const avatar = resolveMedia(profileImage)
   const initials = name
@@ -38,7 +41,11 @@ export function Hero({
         )}
       </div>
       <h1 className="mt-5 font-display text-3xl font-normal sm:text-4xl">{name}</h1>
-      <p className="text-muted mt-2 max-w-prose leading-relaxed text-balance">{bio}</p>
+      <RichLine
+        text={bio}
+        items={workItems}
+        className="text-muted mt-2 max-w-prose leading-relaxed text-balance"
+      />
     </header>
   )
 }
